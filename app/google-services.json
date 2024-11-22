@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "653860545993",
+    "project_id": "learnapp-3579f",
+    "storage_bucket": "learnapp-3579f.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:653860545993:android:8ad7dd7e20a1e252e97418",
+        "android_client_info": {
+          "package_name": "com.janos.nagy.ezlearnapp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAZmWsypbzBl5t4AL0RSqNSFNElwfj3ZpE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
