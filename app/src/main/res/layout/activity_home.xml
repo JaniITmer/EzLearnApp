@@ -11,4 +11,19 @@
         android:layout_width="match_parent"
         android:layout_height="37dp"
         android:text="Főoldal" />
+
+    <FrameLayout
+        android:id="@+id/fragment_container"
+        android:layout_width="match_parent"
+        android:layout_height="558dp">
+
+    </FrameLayout>
+
+    <Button
+        android:id="@+id/profileButton"
+
+        android:layout_width="122dp"
+        android:layout_height="63dp"
+        android:text="Profil" />
+
 </LinearLayout>
