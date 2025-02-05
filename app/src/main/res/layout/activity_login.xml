@@ -18,7 +18,7 @@
         android:id="@+id/passwordEditText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Password"
+        android:hint="Jelszó"
         android:inputType="textPassword" />
 
     <!-- Bejelentkezés gomb -->
@@ -26,5 +26,5 @@
         android:id="@+id/loginButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Log In" />
+        android:text="Bejelentkezés" />
 </LinearLayout>

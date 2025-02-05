@@ -40,6 +40,11 @@ public class RegisterActivity extends AppCompatActivity {
                 return;
             }
 
+            if (password.length() < 8) {
+                Toast.makeText(RegisterActivity.this, "A jelszónak legalább 8 karakter hosszúnak kell lennie!", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
 
             auth.createUserWithEmailAndPassword(email, password)
                     .addOnCompleteListener(task -> {
