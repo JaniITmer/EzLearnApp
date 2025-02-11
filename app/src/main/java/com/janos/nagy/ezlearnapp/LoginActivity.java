@@ -40,7 +40,7 @@ public class LoginActivity extends AppCompatActivity {
                 String password = passwordEditText.getText().toString().trim();
 
                 if (email.isEmpty() || password.isEmpty()) {
-                    Toast.makeText(LoginActivity.this, "Please fill in all fields", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(LoginActivity.this, "Minden mezőt  tölts ki!", Toast.LENGTH_SHORT).show();
                 } else {
 
                     mAuth.signInWithEmailAndPassword(email, password)
@@ -48,7 +48,7 @@ public class LoginActivity extends AppCompatActivity {
                                 if (task.isSuccessful()) {
 
                                     FirebaseUser user = mAuth.getCurrentUser();
-                                    Toast.makeText(LoginActivity.this, "Login successful", Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(LoginActivity.this, "Sikeres bejelentkezés", Toast.LENGTH_SHORT).show();
 
                                     // Ugrás a fő képernyőre (MainActivity)
                                     Intent intent = new Intent(LoginActivity.this, HomeActivity.class);

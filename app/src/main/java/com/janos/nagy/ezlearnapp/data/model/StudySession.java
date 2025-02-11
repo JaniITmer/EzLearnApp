@@ -7,13 +7,51 @@ import androidx.room.PrimaryKey;
 public class StudySession {
 
     @PrimaryKey(autoGenerate = true)
-    public int id;
-    public String date;
-    public int duration;
+    private int id;
+    private long startTime;
+    private long endTime;
+    private long duration;
 
 
-    public StudySession(String date, int duration){
-        this.date=date;
-        this.duration=duration;
+    public StudySession(long startTime) {
+        this.startTime = startTime;
+        this.endTime = -1;
+        this.duration = 0;
+    }
+
+
+    public long getStartTime() {
+        return startTime;
+    }
+
+    public void setStartTime(long startTime) {
+        this.startTime = startTime;
+    }
+
+    public long getEndTime() {
+        return endTime;
+    }
+
+    public void setEndTime(long endTime) {
+        this.endTime = endTime;
+
+        setDuration(endTime - startTime);
+    }
+
+    public long getDuration() {
+        return duration;
+    }
+
+
+    public void setDuration(long duration) {
+        this.duration = duration / 60000;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 }

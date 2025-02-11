@@ -14,16 +14,23 @@
 
     <FrameLayout
         android:id="@+id/fragment_container"
-        android:layout_width="match_parent"
-        android:layout_height="558dp">
+        android:layout_width="346dp"
+        android:layout_height="484dp">
 
     </FrameLayout>
 
     <Button
+        android:id="@+id/studyButton"
+
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Tanulás" />
+
+    <Button
         android:id="@+id/profileButton"
 
-        android:layout_width="122dp"
-        android:layout_height="63dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:text="Profil" />
 
 </LinearLayout>

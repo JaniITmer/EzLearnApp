@@ -4,6 +4,8 @@ import androidx.room.Dao;
 import androidx.room.Delete;
 import androidx.room.Insert;
 import androidx.room.Query;
+import androidx.room.Transaction;
+import androidx.room.Update;
 
 import com.janos.nagy.ezlearnapp.data.model.StudySession;
 
@@ -14,16 +16,12 @@ public interface StudySessionDao {
 
 
     @Insert
-    void insertSession(StudySession session);
+    long insertSession(StudySession session);
 
-    @Query("SELECT * FROM study_sessions ORDER BY date DESC")
-    List<StudySession> getAllSessions();
+    @Query("SELECT * FROM study_sessions WHERE id = :sessionId")
+    StudySession getSessionById(int sessionId);
 
-
-    @Query("SELECT SUM(duration) FROM study_sessions")
-    int getTotalStudyTime();
-
-
-    @Delete
-    void deleteSession(StudySession session);
+    @Transaction
+    @Update
+    void updateSession(StudySession session);
 }
