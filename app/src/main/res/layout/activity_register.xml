@@ -21,7 +21,7 @@
         android:id="@+id/password_field"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Password"
+        android:hint="Jelszó"
         android:inputType="textPassword"
         android:padding="12dp"
         android:layout_marginBottom="16dp" />
@@ -31,7 +31,7 @@
         android:id="@+id/register_button"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Register"
+        android:text="Regisztráció"
         android:padding="12dp" />
 
 </LinearLayout>
