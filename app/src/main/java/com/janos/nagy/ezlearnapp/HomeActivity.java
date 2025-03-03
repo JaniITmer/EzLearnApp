@@ -36,7 +36,7 @@ public class HomeActivity extends AppCompatActivity {
         studyButton = findViewById(R.id.studyButton);
 
 
-        studyButton.setText("Start Study");
+        studyButton.setText("Tanulás elkezdése");
 
 
         Button profileButton=findViewById(R.id.profileButton);
@@ -47,11 +47,11 @@ public class HomeActivity extends AppCompatActivity {
             if (isStudying) {
 
                 endStudy();
-                studyButton.setText("Start Study");
+                studyButton.setText("Tanulás elkezdése");
             } else {
 
                 startStudy();
-                studyButton.setText("End Study");
+                studyButton.setText("Tanulás befejezése");
             }
 
             isStudying = !isStudying;  // Megváltoztatjuk a tanulás státuszát
