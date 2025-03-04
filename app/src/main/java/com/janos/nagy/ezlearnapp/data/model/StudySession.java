@@ -12,11 +12,13 @@ public class StudySession {
     private long endTime;
     private long duration;
 
+    private String sessionType;
 
     public StudySession(long startTime) {
         this.startTime = startTime;
         this.endTime = -1;
         this.duration = 0;
+        this.sessionType = sessionType;
     }
 
 
@@ -54,4 +56,8 @@ public class StudySession {
     public void setId(int id) {
         this.id = id;
     }
+
+    public String getSessionType() { return sessionType; }
+
+    public void setSessionType(String sessionType) { this.sessionType = sessionType; }
 }

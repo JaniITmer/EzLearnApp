@@ -1,0 +1,61 @@
+package com.janos.nagy.ezlearnapp.data.model;
+
+import androidx.room.PrimaryKey;
+
+public class Task {
+    @PrimaryKey(autoGenerate = true)
+    private int id;
+    private String title;
+
+    private long startTime;
+    private int pomodoroCount;
+    private boolean completed;
+
+
+    public Task(String title, long startTime, int pomodoroCount) {
+
+        this.title = title;
+        this.startTime = startTime;
+        this.pomodoroCount = pomodoroCount;
+        this.completed = false;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public long getStartTime() {
+        return startTime;
+    }
+
+    public void setStartTime(long startTime) {
+        this.startTime = startTime;
+    }
+    public int getPomodoroCount(){
+        return pomodoroCount;
+    }
+
+    public void setPomodoroCount(int pomodoroCount){
+        this.pomodoroCount=pomodoroCount;
+
+    }
+    public boolean isCompleted(){return completed;}
+
+    public void setCompleted(boolean completed){this.completed=completed;}
+
+
+
+
+}
