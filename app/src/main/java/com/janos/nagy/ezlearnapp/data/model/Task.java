@@ -1,7 +1,9 @@
 package com.janos.nagy.ezlearnapp.data.model;
 
+import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
+@Entity(tableName = "tasks")
 public class Task {
     @PrimaryKey(autoGenerate = true)
     private int id;

@@ -1,89 +1,70 @@
 package com.janos.nagy.ezlearnapp;
 
 import android.os.Bundle;
-import android.widget.Button;
-
+import android.util.Log;
+import android.view.View;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentTransaction;
-
-import com.janos.nagy.ezlearnapp.data.model.StudySession;
-import com.janos.nagy.ezlearnapp.database.AppDatabase;
-import com.janos.nagy.ezlearnapp.database.StudySessionDao;
-
+import androidx.fragment.app.FragmentManager;
+import androidx.navigation.NavController;
+import androidx.navigation.Navigation;
+import androidx.navigation.fragment.NavHostFragment;
+import androidx.navigation.ui.NavigationUI;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 public class HomeActivity extends AppCompatActivity {
 
 
-    private AppDatabase db;
-    private StudySessionDao studySessionDao;
-    private int currentSessionId;
-    private Button studyButton;
-    private boolean isStudying = false;
+    private static final String TAG = "HomeActivity";
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         setContentView(R.layout.activity_home);
+        Log.d(TAG, "Layout loaded: " + R.layout.activity_home);
 
-        db = AppDatabase.getInstance(this);
-        studySessionDao = db.studySessionDao();
-        new Thread(() -> {
-            db.clearAllTables();
-        }).start();
-        studyButton = findViewById(R.id.studyButton);
+        // Ellenőrizzük, hogy a FragmentContainerView betöltődik-e
+        View navHostView = findViewById(R.id.nav_host_fragment);
+        if (navHostView == null) {
+            Log.e(TAG, "FragmentContainerView not found with ID: " + R.id.nav_host_fragment);
+            return;
+        } else {
+            Log.d(TAG, "FragmentContainerView found with ID: " + R.id.nav_host_fragment);
+        }
 
+        BottomNavigationView navView = findViewById(R.id.nav_view);
+        if (navView == null) {
+            Log.e(TAG, "BottomNavigationView not found!");
+            return;
+        } else {
+            Log.d(TAG, "BottomNavigationView found with ID: " + R.id.nav_view);
+        }
 
-        studyButton.setText("Tanulás elkezdése");
+        // Ellenőrizzük, hogy a NavHostFragment létezik-e
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        NavHostFragment navHostFragment = (NavHostFragment) fragmentManager.findFragmentById(R.id.nav_host_fragment);
+        NavController navController;
 
-
-        Button profileButton=findViewById(R.id.profileButton);
-
-        profileButton.setOnClickListener(v -> loadFragment(new ProfileFragment()));
-
-        studyButton.setOnClickListener(v -> {
-            if (isStudying) {
-
-                endStudy();
-                studyButton.setText("Tanulás elkezdése");
-            } else {
-
-                startStudy();
-                studyButton.setText("Tanulás befejezése");
+        if (navHostFragment == null) {
+            Log.d(TAG, "NavHostFragment not found, creating manually...");
+            try {
+                navHostFragment = NavHostFragment.create(R.navigation.nav_graph);
+                fragmentManager.beginTransaction()
+                        .replace(R.id.nav_host_fragment, navHostFragment)
+                        .setPrimaryNavigationFragment(navHostFragment)
+                        .commitNow(); // commitNow() biztosítja, hogy a fragment azonnal hozzákapcsolódjon
+                navController = navHostFragment.getNavController();
+            } catch (Exception e) {
+                Log.e(TAG, "Failed to create or attach NavHostFragment: " + e.getMessage(), e);
+                return;
             }
+        } else {
+            Log.d(TAG, "NavHostFragment found with ID: " + R.id.nav_host_fragment);
+            navController = navHostFragment.getNavController();
+        }
 
-            isStudying = !isStudying;  // Megváltoztatjuk a tanulás státuszát
-        });
-
-
-    }
-    private void startStudy() {
-        long startTime = System.currentTimeMillis();
-        StudySession newSession = new StudySession(startTime);
-
-
-        new Thread(() -> {
-
-            currentSessionId = (int) studySessionDao.insertSession(newSession);
-        }).start();
-    }
-    private void endStudy() {
-        long endTime = System.currentTimeMillis();
-
-        new Thread(() -> {
-            StudySession session = studySessionDao.getSessionById(currentSessionId);
-            session.setEndTime(endTime);  // Végső időpont beállítása
-            studySessionDao.updateSession(session);  // Adatbázis frissítése
-        }).start();
-    }
-
-
-    private void loadFragment(Fragment fragment){
-
-        FragmentTransaction transaction=getSupportFragmentManager().beginTransaction();
-        transaction.replace(R.id.fragment_container,fragment);
-        transaction.commit();
+        NavigationUI.setupWithNavController(navView, navController);
+        Log.d(TAG, "NavController successfully initialized with ID: " + R.id.nav_host_fragment);
     }
 }

@@ -7,12 +7,15 @@ import androidx.room.Database;
 import androidx.room.Room;
 import androidx.room.RoomDatabase;
 
+import com.janos.nagy.ezlearnapp.data.model.Lesson;
 import com.janos.nagy.ezlearnapp.data.model.StudySession;
+import com.janos.nagy.ezlearnapp.data.model.Task;
+import com.janos.nagy.ezlearnapp.data.model.UserScore;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-@Database(entities = {StudySession.class}, version =6)
+@Database(entities = {StudySession.class, Task.class, UserScore.class, Lesson.class}, version =11)
 public abstract class AppDatabase extends RoomDatabase {
 
     private static volatile AppDatabase INSTANCE;
@@ -23,7 +26,13 @@ public abstract class AppDatabase extends RoomDatabase {
     public static final ExecutorService databaseWriteExecutor =
             Executors.newFixedThreadPool(NUMBER_OF_THREADS);
 
+
     public abstract StudySessionDao studySessionDao();
+
+    public abstract TaskDao taskDao();
+    public abstract UserScoreDao userScoreDao();
+    public abstract LessonDao lessonDao();
+
     public static AppDatabase getInstance(Context context){
 
         if(INSTANCE ==null){

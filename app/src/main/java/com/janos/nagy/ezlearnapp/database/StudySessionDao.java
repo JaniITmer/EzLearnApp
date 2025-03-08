@@ -14,14 +14,12 @@ import java.util.List;
 @Dao
 public interface StudySessionDao {
 
-
     @Insert
     long insertSession(StudySession session);
 
-    @Query("SELECT * FROM study_sessions WHERE id = :sessionId")
-    StudySession getSessionById(int sessionId);
-
-    @Transaction
     @Update
     void updateSession(StudySession session);
+
+    @Query("SELECT * FROM study_sessions WHERE id = :id")
+    StudySession getSessionById(int id);
 }
