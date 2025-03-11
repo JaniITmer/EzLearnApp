@@ -12,6 +12,7 @@ import androidx.lifecycle.ViewModelProvider;
 import com.janos.nagy.ezlearnapp.R;
 import com.janos.nagy.ezlearnapp.StudyViewModel;
 import com.janos.nagy.ezlearnapp.StudyViewModelFactory;
+import com.janos.nagy.ezlearnapp.data.model.StudySession;
 
 
 public class PomodoroFragment extends Fragment {
@@ -19,7 +20,6 @@ public class PomodoroFragment extends Fragment {
     private TextView timerText;
     private TextView scoreText;
     private Button startButton;
-    private boolean isStudying = false;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -31,7 +31,7 @@ public class PomodoroFragment extends Fragment {
         startButton = view.findViewById(R.id.startButton);
 
         // StudyViewModel inicializálása a Factory használatával
-        String userId = "default_user"; // Ezt valahonnan meg kell kapni, pl. bejelentkezéskor
+        String userId = "default_user"; // Ezt valahonnan meg kell kapni
         StudyViewModelFactory factory = new StudyViewModelFactory(requireActivity().getApplication(), userId);
         viewModel = new ViewModelProvider(this, factory).get(StudyViewModel.class);
 
@@ -59,33 +59,40 @@ public class PomodoroFragment extends Fragment {
             }
         });
 
-        // Tanulási állapot figyelése
-        viewModel.getCurrentSession().observe(getViewLifecycleOwner(), session -> {
-            if (session != null && session.getEndTime() == -1) {
-                // Session aktív
+        // Pomodoro futásának figyelése
+        viewModel.isPomodoroRunning().observe(getViewLifecycleOwner(), isRunning -> {
+            if (isRunning) {
                 startButton.setText("Tanulás befejezése");
-                isStudying = true;
-                Log.d("PomodoroFragment", "Session active, setting UI to studying");
+                Log.d("PomodoroFragment", "Pomodoro is running, setting button text to 'Tanulás befejezése'");
             } else {
-                // Session befejeződött
                 startButton.setText("Tanulás elkezdése");
-                isStudying = false;
-                Log.d("PomodoroFragment", "Session ended, resetting UI");
+                Log.d("PomodoroFragment", "Pomodoro is not running, setting button text to 'Tanulás elkezdése'");
             }
         });
 
         startButton.setOnClickListener(v -> {
-            Log.d("PomodoroFragment", "Start button clicked, isStudying: " + isStudying);
-            if (isStudying) {
+            Log.d("PomodoroFragment", "Start button clicked");
+            if (viewModel.isPomodoroRunning().getValue()) {
                 viewModel.stopPomodoro();
                 Log.d("PomodoroFragment", "Stopping Pomodoro session");
             } else {
                 viewModel.startPomodoro();
                 Log.d("PomodoroFragment", "Starting Pomodoro session");
             }
-            isStudying = !isStudying;
         });
 
         return view;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        Log.d("PomodoroFragment", "onResume called");
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        Log.d("PomodoroFragment", "onPause called");
     }
 }
