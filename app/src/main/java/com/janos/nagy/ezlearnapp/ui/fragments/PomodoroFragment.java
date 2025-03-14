@@ -30,6 +30,7 @@ public class PomodoroFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        Log.d("PomodoroFragment", "onCreateView called");
         View view = inflater.inflate(R.layout.fragment_pomodoro, container, false);
 
         timerText = view.findViewById(R.id.timerText);
@@ -48,20 +49,50 @@ public class PomodoroFragment extends Fragment {
             StudyViewModelFactory factory = new StudyViewModelFactory(requireActivity().getApplication(), userId);
             viewModel = new ViewModelProvider(PomodoroFragment.this, factory).get(StudyViewModel.class);
 
-            // Az aktuális felhasználó pontszámának megjelenítése
-            viewModel.getUserScore().observe(getViewLifecycleOwner(), userScore -> {
-                if (userScore != null) {
-                    scoreText.setText("Pontszám: " + userScore.getScore());
+            // Timer szöveg frissítése valós időben
+            viewModel.getRemainingTime().observe(getViewLifecycleOwner(), remainingTime -> {
+                if (remainingTime != null) {
+                    int minutes = (int) (remainingTime / 60);
+                    int seconds = (int) (remainingTime % 60);
+                    timerText.setText(String.format("%02d:%02d", minutes, seconds));
+                    Log.d("PomodoroFragment", "Timer updated: " + remainingTime + " seconds");
                 } else {
-                    scoreText.setText("Pontszám: 0");
+                    timerText.setText("25:00");
+                    Log.d("PomodoroFragment", "Remaining time is null, resetting to 25:00");
                 }
             });
 
+            // Pontszám figyelése
+            viewModel.getUserScore().observe(getViewLifecycleOwner(), userScore -> {
+                if (userScore != null) {
+                    scoreText.setText("Pontszám: " + userScore.getScore());
+                    Log.d("PomodoroFragment", "Score updated: " + userScore.getScore());
+                } else {
+                    scoreText.setText("Pontszám: 0");
+                    Log.d("PomodoroFragment", "Score is null, resetting to 0");
+                }
+            });
+
+            // Pomodoro futásának figyelése
+            viewModel.isPomodoroRunning().observe(getViewLifecycleOwner(), isRunning -> {
+                if (isRunning) {
+                    startButton.setText("Tanulás befejezése");
+                    Log.d("PomodoroFragment", "Pomodoro is running, setting button text to 'Tanulás befejezése'");
+                } else {
+                    startButton.setText("Tanulás elkezdése");
+                    Log.d("PomodoroFragment", "Pomodoro is not running, setting button text to 'Tanulás elkezdése'");
+                }
+            });
+
+            // Start/Stop gomb eseménykezelő
             startButton.setOnClickListener(v -> {
+                Log.d("PomodoroFragment", "Start button clicked");
                 if (viewModel.isPomodoroRunning().getValue()) {
                     viewModel.stopPomodoro();
+                    Log.d("PomodoroFragment", "Stopping Pomodoro session");
                 } else {
                     viewModel.startPomodoro();
+                    Log.d("PomodoroFragment", "Starting Pomodoro session");
                 }
             });
 

@@ -3,6 +3,8 @@ package com.janos.nagy.ezlearnapp;
 
 import android.app.Application;
 import android.os.CountDownTimer;
+import android.util.Log;
+
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
@@ -66,7 +68,7 @@ import com.janos.nagy.ezlearnapp.repository.StudyRepository;
             pomodoroTimer = new CountDownTimer(POMODORO_DURATION, 1000) {
                 @Override
                 public void onTick(long millisUntilFinished) {
-                    remainingTime.setValue(millisUntilFinished / 1000);
+                    remainingTime.setValue(millisUntilFinished / 1000); // Frissítjük az UI-t másodpercenként
                     if (millisUntilFinished % (60 * 1000) == 0) {
                         updateScore(1); // 1 pont minden percért
                     }
@@ -74,19 +76,17 @@ import com.janos.nagy.ezlearnapp.repository.StudyRepository;
 
                 @Override
                 public void onFinish() {
-                    remainingTime.setValue(null);
+                    remainingTime.setValue(0L); // Miután vége, nullázzuk a számlálót
                     StudySession completedSession = currentSession.getValue();
                     if (completedSession != null) {
                         completedSession.setEndTime(System.currentTimeMillis());
                         currentSession.setValue(completedSession);
                         repository.updateSession(completedSession);
                     }
-                    // Frissítjük az állapotot, hogy a Pomodoro már nem fut
-                    isPomodoroRunning.setValue(false);
+                    isPomodoroRunning.setValue(false); // A Pomodoro befejeződött
                 }
             }.start();
         }
-
         public void stopPomodoro() {
             if (pomodoroTimer != null) {
                 pomodoroTimer.cancel();
