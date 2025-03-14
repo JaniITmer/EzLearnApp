@@ -15,10 +15,10 @@ public interface UserScoreDao {
 
     @Update
     void updateScore(UserScore score);
+
     @Query("SELECT * FROM user_scores WHERE userId = :userId LIMIT 1")
     LiveData<UserScore> getScoreByUserIdLiveData(String userId);
 
     @Query("SELECT * FROM user_scores WHERE userId = :userId LIMIT 1")
-    UserScore getScoreByUserId(String userId); // Ez maradhat szinkron, de csak háttérszálon használható
-
+    UserScore getScoreByUserId(String userId);
 }
