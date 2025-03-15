@@ -71,4 +71,7 @@ public class StudyRepository {
     public LiveData<List<Lesson>> getLessons(String userId) {
         return lessonDao.getLessonsByUserId(userId);
     }
+    public LiveData<List<UserScore>> getAllScoresOrdered() {
+        return userScoreDao.getAllScoresOrdered();
+    }
 }

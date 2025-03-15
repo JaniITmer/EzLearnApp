@@ -1,6 +1,6 @@
 package com.janos.nagy.ezlearnapp.ui.fragments;
 
-import android.app.Activity;  // Hozzáadott import
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -12,7 +12,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.janos.nagy.ezlearnapp.LessonAdapter;
 import com.janos.nagy.ezlearnapp.R;
-import com.janos.nagy.ezlearnapp.LessonViewModel;  // Módosított import (viewmodel kisbetűs)
+import com.janos.nagy.ezlearnapp.LessonViewModel;
 
 public class LessonsFragment extends Fragment {
     private static final int REQUEST_CODE = 1;

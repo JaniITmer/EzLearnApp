@@ -11,6 +11,8 @@ import androidx.lifecycle.ViewModel;
 import com.janos.nagy.ezlearnapp.data.model.UserScore;
 import com.janos.nagy.ezlearnapp.repository.StudyRepository;
 
+import java.util.List;
+
 public class LeaderboardViewModel extends ViewModel {
     private final StudyRepository repository;
     private final MutableLiveData<String> userId = new MutableLiveData<>();
@@ -28,4 +30,8 @@ public class LeaderboardViewModel extends ViewModel {
     public LiveData<UserScore> getUserScore() {
         return Transformations.switchMap(userId, repository::getScore);
     }
+    public LiveData<List<UserScore>> getLeaderboard() {
+        return repository.getAllScoresOrdered();
+    }
+
 }

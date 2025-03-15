@@ -10,6 +10,8 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -21,6 +23,9 @@ import com.janos.nagy.ezlearnapp.repository.StudyRepository;
 public class LeaderboardFragment extends Fragment {
     private LeaderboardViewModel viewModel;
     private FirebaseAuth mAuth;
+    private RecyclerView recyclerView;
+    private LeaderboardAdapter adapter;
+
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_leaderboard, container, false);
@@ -28,31 +33,21 @@ public class LeaderboardFragment extends Fragment {
         mAuth = FirebaseAuth.getInstance();
         FirebaseUser user = mAuth.getCurrentUser();
 
-        String userId = user.getUid();
-
-
         if (user == null) {
             Toast.makeText(getContext(), "Nincs bejelentkezett felhasználó!", Toast.LENGTH_SHORT).show();
             return view;
         }
 
+        String userId = user.getUid();
         viewModel = new ViewModelProvider(this, new LeaderboardViewModelFactory(requireContext().getApplicationContext()))
                 .get(LeaderboardViewModel.class);
 
-        viewModel.setUserId(userId);
+        recyclerView = view.findViewById(R.id.leaderboard_recycler_view);
+        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
-
-
-
-        TextView scoreTextView = view.findViewById(R.id.score_text_view);
-
-        // Figyeld a LiveData változását
-        viewModel.getUserScore().observe(getViewLifecycleOwner(), userScore -> {
-            if (userScore != null) {
-                scoreTextView.setText("Pontszám: " + userScore.getScore());
-            } else {
-                Toast.makeText(getContext(), "Nincs elérhető pontszám", Toast.LENGTH_SHORT).show();
-            }
+        viewModel.getLeaderboard().observe(getViewLifecycleOwner(), userScores -> {
+            adapter = new LeaderboardAdapter(getContext(), userScores, userId);
+            recyclerView.setAdapter(adapter);
         });
 
         return view;

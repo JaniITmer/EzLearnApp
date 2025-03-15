@@ -8,6 +8,8 @@ import androidx.room.Update;
 
 import com.janos.nagy.ezlearnapp.data.model.UserScore;
 
+import java.util.List;
+
 @Dao
 public interface UserScoreDao {
     @Insert
@@ -21,4 +23,6 @@ public interface UserScoreDao {
 
     @Query("SELECT * FROM user_scores WHERE userId = :userId LIMIT 1")
     UserScore getScoreByUserId(String userId);
+    @Query("SELECT * FROM user_scores ORDER BY score DESC")
+    LiveData<List<UserScore>> getAllScoresOrdered();
 }
