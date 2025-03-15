@@ -87,6 +87,7 @@ import com.janos.nagy.ezlearnapp.repository.StudyRepository;
                 }
             }.start();
         }
+
         public void stopPomodoro() {
             if (pomodoroTimer != null) {
                 pomodoroTimer.cancel();
@@ -110,6 +111,11 @@ import com.janos.nagy.ezlearnapp.repository.StudyRepository;
             int newScore = (currentScore != null ? currentScore.getScore() : 0) + points;
             UserScore updatedScore = new UserScore(userId, newScore);
             repository.updateScore(updatedScore);
+        }
+
+        // Szinkronizálás Firestore-ból
+        public void syncScoresFromFirestore() {
+            repository.syncScoresFromFirestore(userId); // A repository-ban meghívva
         }
 
         @Override

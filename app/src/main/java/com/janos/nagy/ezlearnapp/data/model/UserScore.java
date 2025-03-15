@@ -11,6 +11,10 @@ public class UserScore {
     private String userId;
     private int score;
 
+
+    public UserScore() {
+
+    }
     public UserScore(String userId,int score){
 
         this.userId=userId;

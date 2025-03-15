@@ -20,7 +20,9 @@ public class StudySession {
         this.duration = 0;
         this.sessionType = sessionType;
     }
-
+    public int getSessionId() {
+        return id;
+    }
 
     public long getStartTime() {
         return startTime;

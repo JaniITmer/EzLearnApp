@@ -20,7 +20,9 @@ public class Lesson {
 
 
     }
-
+    public String getLessonId() {
+        return String.valueOf(id);
+    }
 
     public int getId() { return id;}
     public void setId(int id){this.id=id;}
