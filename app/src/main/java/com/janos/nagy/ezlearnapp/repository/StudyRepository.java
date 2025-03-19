@@ -6,6 +6,7 @@ import android.util.Log;
 import androidx.lifecycle.LiveData;
 
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.SetOptions;
 import com.janos.nagy.ezlearnapp.data.model.Lesson;
@@ -117,6 +118,21 @@ public class StudyRepository {
                     .set(session, SetOptions.merge())  // Frissíti az adatokat Firestore-ban
                     .addOnSuccessListener(aVoid -> Log.d("Firestore", "StudySession sikeresen frissítve!"))
                     .addOnFailureListener(e -> Log.e("Firestore", "Hiba Firestore frissítésnél", e));
+        });
+    }
+    public void syncAllScoresFromFirestore() {
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        db.collection("user_scores").get().addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                for (DocumentSnapshot document : task.getResult()) {
+                    UserScore userScore = document.toObject(UserScore.class);
+                    if (userScore != null) {
+                        updateScore(userScore);
+                    }
+                }
+            } else {
+                Log.e("Firestore", "Hiba az összes pontszám lekérdezésekor", task.getException());
+            }
         });
     }
     public void syncScoresFromFirestore(String userId) {

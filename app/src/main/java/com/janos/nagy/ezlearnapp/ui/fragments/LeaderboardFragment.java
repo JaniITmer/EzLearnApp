@@ -20,6 +20,8 @@ import com.janos.nagy.ezlearnapp.R;
 import com.janos.nagy.ezlearnapp.LeaderboardViewModel;
 import com.janos.nagy.ezlearnapp.repository.StudyRepository;
 
+import java.util.ArrayList;
+
 public class LeaderboardFragment extends Fragment {
     private LeaderboardViewModel viewModel;
     private FirebaseAuth mAuth;
@@ -45,9 +47,13 @@ public class LeaderboardFragment extends Fragment {
         recyclerView = view.findViewById(R.id.leaderboard_recycler_view);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
+        // 🔹 ADAPTER INICIALIZÁLÁSA ÜRES LISTÁVAL
+        adapter = new LeaderboardAdapter(getContext(), new ArrayList<>(), userId);
+        recyclerView.setAdapter(adapter);
+
         viewModel.getLeaderboard().observe(getViewLifecycleOwner(), userScores -> {
-            adapter = new LeaderboardAdapter(getContext(), userScores, userId);
-            recyclerView.setAdapter(adapter);
+            // 🔹 Ha a megfigyelt adatok frissülnek, frissítjük az adaptert
+            adapter.updateData(userScores);
         });
 
         return view;

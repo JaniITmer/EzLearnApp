@@ -62,4 +62,9 @@ public class LeaderboardAdapter extends RecyclerView.Adapter<LeaderboardAdapter.
             scoreTextView = itemView.findViewById(R.id.score_text_view);
         }
     }
+    public void updateData(List<UserScore> newScores) {
+        this.userScores.clear();
+        this.userScores.addAll(newScores);
+        notifyDataSetChanged();
+    }
 }
