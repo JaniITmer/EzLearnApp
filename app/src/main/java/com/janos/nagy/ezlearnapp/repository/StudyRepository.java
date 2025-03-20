@@ -103,6 +103,16 @@ public class StudyRepository {
                     .addOnFailureListener(e -> Log.e("Firestore", "Hiba Firestore mentésnél", e));
         });
     }
+    public void deleteLesson(Lesson lesson) {
+        executorService.execute(() -> {
+            lessonDao.deleteLesson(lesson);  // Törlés a Room adatbázisból
+            firestore.collection("lessons")
+                    .document(lesson.getLessonId())  // Azonosító alapján törlés
+                    .delete()
+                    .addOnSuccessListener(aVoid -> Log.d("Firestore", "Lecke sikeresen törölve!"))
+                    .addOnFailureListener(e -> Log.e("Firestore", "Hiba Firestore törlésnél", e));
+        });
+    }
 
     public LiveData<List<Lesson>> getLessons(String userId) {
         return lessonDao.getLessonsByUserId(userId);

@@ -28,7 +28,9 @@ public class LessonViewModel extends AndroidViewModel {
             currentUserId = null; // Vagy egy default érték, pl. "guest"
         }
     }
-
+    public void deleteLesson(Lesson lesson) {
+        repository.deleteLesson(lesson);  // Kérés a repository felé
+    }
     public LiveData<List<Lesson>> getLessons() {
         // A Firebase UID-t használjuk a leckék lekérdezéséhez
         return repository.getLessons(currentUserId);

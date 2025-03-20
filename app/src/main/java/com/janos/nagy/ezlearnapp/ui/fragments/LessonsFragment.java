@@ -22,6 +22,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.janos.nagy.ezlearnapp.LessonAdapter;
 import com.janos.nagy.ezlearnapp.LessonViewModel;
 import com.janos.nagy.ezlearnapp.R;
+import com.janos.nagy.ezlearnapp.data.model.Lesson;
 
 import java.io.File;
 
@@ -38,8 +39,18 @@ public class LessonsFragment extends Fragment {
         recyclerView = view.findViewById(R.id.lessonRecyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
-        // 🔹 Adapter inicializálása kattintáskezelővel
-        adapter = new LessonAdapter(lesson -> openPdf(lesson.getFilePath()));
+        // Adapter inicializálása kattintás és törlés eseményekkel
+        adapter = new LessonAdapter(new LessonAdapter.OnLessonClickListener() {
+            @Override
+            public void onLessonClick(Lesson lesson) {
+                openPdf(lesson.getFilePath());
+            }
+
+            @Override
+            public void onLessonDelete(Lesson lesson) {
+                showDeleteConfirmationDialog(lesson);
+            }
+        });
         recyclerView.setAdapter(adapter);
 
         viewModel = new ViewModelProvider(this).get(LessonViewModel.class);
@@ -60,11 +71,7 @@ public class LessonsFragment extends Fragment {
         if (requestCode == REQUEST_CODE && resultCode == Activity.RESULT_OK && data != null) {
             Uri fileUri = data.getData();
             if (fileUri != null) {
-                // 🔹 Állandó engedély megadása a fájlhoz
-                requireActivity().getContentResolver().takePersistableUriPermission(
-                        fileUri, Intent.FLAG_GRANT_READ_URI_PERMISSION
-                );
-
+                requireActivity().getContentResolver().takePersistableUriPermission(fileUri, Intent.FLAG_GRANT_READ_URI_PERMISSION);
                 showLessonNameDialog(fileUri.toString());
             }
         }
@@ -90,6 +97,17 @@ public class LessonsFragment extends Fragment {
         builder.setNegativeButton("Mégse", (dialog, which) -> dialog.cancel());
 
         builder.show();
+    }
+
+    private void showDeleteConfirmationDialog(Lesson lesson) {
+        new AlertDialog.Builder(getContext())
+                .setTitle("Biztos, hogy törölni szeretnéd ezt a leckét?")
+                .setPositiveButton("Igen", (dialog, which) -> {
+                    viewModel.deleteLesson(lesson); // Lecke törlése a ViewModel-ben
+                    Toast.makeText(getContext(), "Lecke törölve!", Toast.LENGTH_SHORT).show();
+                })
+                .setNegativeButton("Nem", (dialog, which) -> dialog.cancel())
+                .show();
     }
 
     private void openPdf(String filePath) {
