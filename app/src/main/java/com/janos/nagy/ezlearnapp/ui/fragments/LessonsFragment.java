@@ -23,6 +23,8 @@ import com.janos.nagy.ezlearnapp.LessonAdapter;
 import com.janos.nagy.ezlearnapp.LessonViewModel;
 import com.janos.nagy.ezlearnapp.R;
 
+import java.io.File;
+
 public class LessonsFragment extends Fragment {
     private static final int REQUEST_CODE = 1;
     private LessonViewModel viewModel;
@@ -35,7 +37,9 @@ public class LessonsFragment extends Fragment {
 
         recyclerView = view.findViewById(R.id.lessonRecyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        adapter = new LessonAdapter();
+
+        // 🔹 Adapter inicializálása kattintáskezelővel
+        adapter = new LessonAdapter(lesson -> openPdf(lesson.getFilePath()));
         recyclerView.setAdapter(adapter);
 
         viewModel = new ViewModelProvider(this).get(LessonViewModel.class);
@@ -56,6 +60,11 @@ public class LessonsFragment extends Fragment {
         if (requestCode == REQUEST_CODE && resultCode == Activity.RESULT_OK && data != null) {
             Uri fileUri = data.getData();
             if (fileUri != null) {
+                // 🔹 Állandó engedély megadása a fájlhoz
+                requireActivity().getContentResolver().takePersistableUriPermission(
+                        fileUri, Intent.FLAG_GRANT_READ_URI_PERMISSION
+                );
+
                 showLessonNameDialog(fileUri.toString());
             }
         }
@@ -74,12 +83,19 @@ public class LessonsFragment extends Fragment {
                 viewModel.addLesson(lessonTitle, filePath);
                 Toast.makeText(getContext(), "Lecke elmentve!", Toast.LENGTH_SHORT).show();
             } else {
-                Toast.makeText(getContext(), "A új leckéd neve nem lehet üres!", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), "A lecke neve nem lehet üres!", Toast.LENGTH_SHORT).show();
             }
         });
 
         builder.setNegativeButton("Mégse", (dialog, which) -> dialog.cancel());
 
         builder.show();
+    }
+
+    private void openPdf(String filePath) {
+        Intent intent = new Intent(Intent.ACTION_VIEW);
+        intent.setDataAndType(Uri.parse(filePath), "application/pdf");
+        intent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+        startActivity(intent);
     }
 }
