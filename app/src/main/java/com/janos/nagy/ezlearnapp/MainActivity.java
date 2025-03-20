@@ -1,7 +1,9 @@
 package com.janos.nagy.ezlearnapp;
 
+import android.content.ComponentName;
 import android.content.Intent;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.view.View;
 import android.widget.Button;
 
@@ -20,6 +22,7 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
         mAuth = FirebaseAuth.getInstance();
 
@@ -55,6 +58,8 @@ public class MainActivity extends AppCompatActivity {
                         Intent intent = new Intent(MainActivity.this, RegisterActivity.class);
                         startActivity(intent);
                     }
+
+
                 });
 
                 // Hivatkozás a login gombra
@@ -69,7 +74,24 @@ public class MainActivity extends AppCompatActivity {
                         startActivity(intent);
                     }
                 });
+                // Értesítési engedély automatikus ellenőrzése és kérése
+                if (!isNotificationServiceEnabled()) {
+                    requestNotificationPermission();
+                }
             }
         }
+
+    }
+    // Értesítési engedély kérése
+    private void requestNotificationPermission() {
+        Intent intent = new Intent(Settings.ACTION_NOTIFICATION_LISTENER_SETTINGS);
+        startActivity(intent);
+    }
+
+    // Ellenőrzi, hogy az értesítési szolgáltatás engedélyezve van-e
+    private boolean isNotificationServiceEnabled() {
+        ComponentName cn = new ComponentName(this, MyNotificationService.class);
+        String flat = Settings.Secure.getString(getContentResolver(), "enabled_notification_listeners");
+        return flat != null && flat.contains(cn.flattenToString());
     }
 }
