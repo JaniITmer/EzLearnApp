@@ -95,11 +95,12 @@ public class StudyRepository {
 
     public void insertLesson(Lesson lesson) {
         executorService.execute(() -> {
-            lessonDao.insertLesson(lesson);
+            long newId = lessonDao.insertLesson(lesson);  // Az Room generálja az új id-t
+            lesson.setId((int) newId);  // Frissítjük a Lesson objektum id-jét
             firestore.collection("lessons")
-                    .document(lesson.getLessonId())
+                    .document(lesson.getLessonId())  // Az egyedi id alapján mentjük
                     .set(lesson)
-                    .addOnSuccessListener(aVoid -> Log.d("Firestore", "Lecke sikeresen mentve!"))
+                    .addOnSuccessListener(aVoid -> Log.d("Firestore", "Lecke sikeresen mentve, ID: " + lesson.getLessonId()))
                     .addOnFailureListener(e -> Log.e("Firestore", "Hiba Firestore mentésnél", e));
         });
     }
@@ -144,6 +145,32 @@ public class StudyRepository {
                 Log.e("Firestore", "Hiba az összes pontszám lekérdezésekor", task.getException());
             }
         });
+    }
+    public void syncLessonsFromFirestore(String userId) {
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        db.collection("lessons")
+                .whereEqualTo("userId", userId)
+                .get()
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        for (DocumentSnapshot document : task.getResult()) {
+                            Lesson lesson = document.toObject(Lesson.class);
+                            if (lesson != null) {
+                                executorService.execute(() -> {
+                                    Lesson existingLesson = lessonDao.getLessonById(lesson.getId());
+                                    if (existingLesson == null) {
+                                        lessonDao.insertLesson(lesson);
+                                    } else {
+                                        lessonDao.updateLesson(lesson);
+                                    }
+                                    Log.d("Firestore", "Lecke szinkronizálva: " + lesson.getTitle());
+                                });
+                            }
+                        }
+                    } else {
+                        Log.e("Firestore", "Hiba a leckék lekérdezésekor", task.getException());
+                    }
+                });
     }
     public void syncScoresFromFirestore(String userId) {
         FirebaseFirestore db = FirebaseFirestore.getInstance();

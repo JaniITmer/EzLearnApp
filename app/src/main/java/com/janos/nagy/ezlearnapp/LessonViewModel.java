@@ -1,6 +1,8 @@
 package com.janos.nagy.ezlearnapp;
 
 import android.app.Application;
+import android.util.Log;
+
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
@@ -23,14 +25,17 @@ public class LessonViewModel extends AndroidViewModel {
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         if (user != null) {
             currentUserId = user.getUid();
+            repository.syncLessonsFromFirestore(currentUserId);  // Szinkronizáció indítása itt
         } else {
-            // Ha nincs bejelentkezett felhasználó, kezeljük a helyzetet (pl. null érték, vagy default érték)
+            // Ha nincs bejelentkezett felhasználó, kezeljük a helyzetet
             currentUserId = null; // Vagy egy default érték, pl. "guest"
         }
     }
+
     public void deleteLesson(Lesson lesson) {
         repository.deleteLesson(lesson);  // Kérés a repository felé
     }
+
     public LiveData<List<Lesson>> getLessons() {
         // A Firebase UID-t használjuk a leckék lekérdezéséhez
         return repository.getLessons(currentUserId);
@@ -41,11 +46,11 @@ public class LessonViewModel extends AndroidViewModel {
         if (currentUserId != null) {
             repository.insertLesson(new Lesson(title, filePath, currentUserId));
         } else {
-            // Kezeljük a helyzetet, ha nincs bejelentkezett felhasználó
-            // Pl. logolunk egy hibát, vagy nem mentjük el a leckét
-            // Log.e("LessonViewModel", "Nincs bejelentkezett felhasználó, a lecke nem menthető.");
+
+            Log.e("LessonViewModel", "Nincs bejelentkezett felhasználó, a lecke nem menthető.");
         }
     }
+
     public String getCurrentUserId() {
         return currentUserId;
     }

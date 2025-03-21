@@ -11,6 +11,8 @@ public class Lesson {
     private String filePath;
     private String userId;
 
+    public Lesson() {
+    }
 
     public Lesson(String title, String filePath, String userId){
 

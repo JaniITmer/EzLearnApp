@@ -5,6 +5,7 @@ import androidx.room.Dao;
 import androidx.room.Delete;
 import androidx.room.Insert;
 import androidx.room.Query;
+import androidx.room.Update;
 
 import com.janos.nagy.ezlearnapp.data.model.Lesson;
 
@@ -20,4 +21,10 @@ public interface LessonDao {
 
     @Delete
     void deleteLesson(Lesson lesson);  // Törlés metódus hozzáadása
+
+    @Query("SELECT * FROM lessons WHERE id = :lessonId LIMIT 1")
+    Lesson getLessonById(int lessonId);
+
+    @Update
+    void updateLesson(Lesson lesson);
 }
