@@ -20,15 +20,14 @@ public class StudyViewModel extends ViewModel {
     private final MutableLiveData<StudySession> currentSession = new MutableLiveData<>();
     private final LiveData<UserScore> userScore;
     private CountDownTimer pomodoroTimer;
-    private final static int minutes = 1;
-    private static final long POMODORO_DURATION = minutes * 60 * 1000; // 25 minutes
+    private long pomodoroDuration = 25 * 60 * 1000;
     private final String userId;
     private final MutableLiveData<Boolean> isPomodoroRunning = new MutableLiveData<>(false);
 
     public StudyViewModel(Application application, String userId) {
         this.repository = new StudyRepository(application);
         this.userId = userId;
-        remainingTime.setValue(POMODORO_DURATION / 1000); // Initial value: 25 minutes in seconds
+        remainingTime.setValue(pomodoroDuration / 1000);
         StudySession initialSession = new StudySession(System.currentTimeMillis(), "pomodoro");
         currentSession.setValue(initialSession);
         repository.insertSession(initialSession);
@@ -51,6 +50,14 @@ public class StudyViewModel extends ViewModel {
         return isPomodoroRunning;
     }
 
+    public void setPomodoroDuration(int minutes) {
+        pomodoroDuration = minutes * 60 * 1000; // milisec
+        if (!isPomodoroRunning.getValue()) {                //szerkesztes nem futasidoben
+            remainingTime.setValue(pomodoroDuration / 1000);
+        }
+        Log.d("StudyViewModel", "Pomodoro duration set to: " + minutes + " minutes");
+    }
+
     public void startPomodoro() {
         if (pomodoroTimer != null) {
             pomodoroTimer.cancel();
@@ -61,7 +68,7 @@ public class StudyViewModel extends ViewModel {
         repository.insertSession(session);
         isPomodoroRunning.setValue(true);
 
-        pomodoroTimer = new CountDownTimer(POMODORO_DURATION, 1000) {
+        pomodoroTimer = new CountDownTimer(pomodoroDuration, 1000) {
             @Override
             public void onTick(long millisUntilFinished) {
                 remainingTime.setValue(millisUntilFinished / 1000);
@@ -79,32 +86,37 @@ public class StudyViewModel extends ViewModel {
                     completedSession.setEndTime(System.currentTimeMillis());
                     currentSession.setValue(completedSession);
                     repository.updateSession(completedSession);
-                    updateScore(minutes); // Add 25 points for completing the session
-
+                    int pointsToAdd = (int) (pomodoroDuration / (60 * 1000)); // Convert duration to minutes
+                    updateScore(pointsToAdd);
+                    Log.d("StudyViewModel", "Pomodoro finished. Added " + pointsToAdd + " points. New score: " + (userScore.getValue() != null ? userScore.getValue().getScore() : 0));
                 }
-                // Instead of restarting, end the session
-                stopPomodoro(); // Call stopPomodoro to end the session cleanly
-                Log.d("StudyViewModel", "Pomodoro finished. Added max points. New score: " + (userScore.getValue() != null ? userScore.getValue().getScore() : 0));
+                stopPomodoro(false); // End the session
             }
         }.start();
     }
 
     public void stopPomodoro() {
+        stopPomodoro(true);
+    }
+
+    private void stopPomodoro(boolean addPoints) {
         if (pomodoroTimer != null) {
             pomodoroTimer.cancel();
             pomodoroTimer = null;
         }
-        remainingTime.setValue(POMODORO_DURATION / 1000); // Reset timer to 25:00
+        remainingTime.setValue(pomodoroDuration / 1000);
         StudySession session = currentSession.getValue();
         if (session != null) {
             session.setEndTime(System.currentTimeMillis());
             currentSession.setValue(session);
             repository.updateSession(session);
-            long durationInMinutes = session.getDuration();
-            updateScore((int) durationInMinutes); // This might double-count points if called after onFinish; see note below
-            Log.d("StudyViewModel", "Pomodoro stopped. Added " + durationInMinutes + " points. New score: " + (userScore.getValue() != null ? userScore.getValue().getScore() : 0));
+            if (addPoints) {
+                long durationInMinutes = session.getDuration();
+                updateScore((int) durationInMinutes);
+                Log.d("StudyViewModel", "Pomodoro stopped. Added " + durationInMinutes + " points. New score: " + (userScore.getValue() != null ? userScore.getValue().getScore() : 0));
+            }
         }
-        isPomodoroRunning.setValue(false); // Set to false so the button switches to "Tanulás elkezdése"
+        isPomodoroRunning.setValue(false);
     }
 
     private void updateScore(int points) {

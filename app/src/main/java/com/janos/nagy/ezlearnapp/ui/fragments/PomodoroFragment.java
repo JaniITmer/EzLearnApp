@@ -1,11 +1,13 @@
 package com.janos.nagy.ezlearnapp.ui.fragments;
 
+import android.app.AlertDialog;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -26,7 +28,6 @@ public class PomodoroFragment extends Fragment {
     private TextView timerText;
     private TextView scoreText;
     private Button startButton;
-    private UserRepository userRepository;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -37,19 +38,15 @@ public class PomodoroFragment extends Fragment {
         scoreText = view.findViewById(R.id.scoreText);
         startButton = view.findViewById(R.id.startButton);
 
-        userRepository = new UserRepository(requireActivity().getApplication());
-
-        // Lekérjük a bejelentkezett felhasználó ID-ját
         FirebaseAuth mAuth = FirebaseAuth.getInstance();
         FirebaseUser currentUser = mAuth.getCurrentUser();
 
         if (currentUser != null) {
-            String userId = currentUser.getUid(); // Az aktuális felhasználó UID-ja
-
+            String userId = currentUser.getUid();
             StudyViewModelFactory factory = new StudyViewModelFactory(requireActivity().getApplication(), userId);
-            viewModel = new ViewModelProvider(PomodoroFragment.this, factory).get(StudyViewModel.class);
+            viewModel = new ViewModelProvider(this, factory).get(StudyViewModel.class);
 
-            // Timer szöveg frissítése valós időben
+            // Timer text observation
             viewModel.getRemainingTime().observe(getViewLifecycleOwner(), remainingTime -> {
                 if (remainingTime != null) {
                     int minutes = (int) (remainingTime / 60);
@@ -58,35 +55,40 @@ public class PomodoroFragment extends Fragment {
                     Log.d("PomodoroFragment", "Timer updated: " + remainingTime + " seconds");
                 } else {
                     timerText.setText("25:00");
-                    Log.d("PomodoroFragment", "Remaining time is null, resetting to 25:00");
+                    Log.d("PomodoroFragment", "Remaining time is null, resetting to default");
                 }
             });
 
-            // Pontszám figyelése
+            // Score observation
             viewModel.getUserScore().observe(getViewLifecycleOwner(), userScore -> {
                 if (userScore != null) {
                     scoreText.setText("Pontszám: " + userScore.getScore());
-                    Log.d("PomodoroFragment", "Score updated: " + userScore.getScore());
+                    Log.d("PomodoroFragment", "Pontszám frissítve: " + userScore.getScore());
                 } else {
                     scoreText.setText("Pontszám: 0");
-                    Log.d("PomodoroFragment", "Score is null, resetting to 0");
                 }
             });
 
-            // Pomodoro futásának figyelése
+            // Pomodoro running state observation
             viewModel.isPomodoroRunning().observe(getViewLifecycleOwner(), isRunning -> {
                 if (isRunning) {
                     startButton.setText("Tanulás befejezése");
-                    Log.d("PomodoroFragment", "Pomodoro is running, setting button text to 'Tanulás befejezése'");
+                    timerText.setEnabled(false); // Disable clicking while running
                 } else {
                     startButton.setText("Tanulás elkezdése");
-                    Log.d("PomodoroFragment", "Pomodoro is not running, setting button text to 'Tanulás elkezdése'");
+                    timerText.setEnabled(true); // Enable clicking when not running
                 }
             });
 
-            // Start/Stop gomb eseménykezelő
+            // Click listener for timerText to set duration
+            timerText.setOnClickListener(v -> {
+                if (!viewModel.isPomodoroRunning().getValue()) {
+                    showTimePickerDialog();
+                }
+            });
+
+            // Start/Stop button listener
             startButton.setOnClickListener(v -> {
-                Log.d("PomodoroFragment", "Start button clicked");
                 if (viewModel.isPomodoroRunning().getValue()) {
                     viewModel.stopPomodoro();
                     Log.d("PomodoroFragment", "Stopping Pomodoro session");
@@ -102,5 +104,35 @@ public class PomodoroFragment extends Fragment {
         }
 
         return view;
+    }
+
+    private void showTimePickerDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
+        builder.setTitle("Pomodoro időtartam beállítása");
+
+        final EditText input = new EditText(requireContext());
+        input.setInputType(android.text.InputType.TYPE_CLASS_NUMBER);
+        input.setHint("Perc (például: 25)");
+        builder.setView(input);
+
+        builder.setPositiveButton("OK", (dialog, which) -> {
+            String minutesStr = input.getText().toString();
+            if (!minutesStr.isEmpty()) {
+                try {
+                    int minutes = Integer.parseInt(minutesStr);
+                    if (minutes > 0) {
+                        viewModel.setPomodoroDuration(minutes);
+                        Toast.makeText(getContext(), "Időtartam beállítva: " + minutes + " perc", Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(getContext(), "Az időtartam pozitív szám kell legyen!", Toast.LENGTH_SHORT).show();
+                    }
+                } catch (NumberFormatException e) {
+                    Toast.makeText(getContext(), "Érvénytelen számformátum!", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+
+        builder.setNegativeButton("Mégse", (dialog, which) -> dialog.cancel());
+        builder.show();
     }
 }
