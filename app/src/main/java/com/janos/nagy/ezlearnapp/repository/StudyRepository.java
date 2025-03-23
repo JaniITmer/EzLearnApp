@@ -45,11 +45,12 @@ public class StudyRepository {
 
     public void insertSession(StudySession session) {
         executorService.execute(() -> {
-            studySessionDao.insertSession(session);
+            long newId = studySessionDao.insertSession(session);
+            session.setId((int) newId);
             firestore.collection("study_sessions")
-                    .document(String.valueOf(session.getId()))  // Az int id konvertálása String-gé
+                    .document(String.valueOf(newId))
                     .set(session)
-                    .addOnSuccessListener(aVoid -> Log.d("Firestore", "StudySession sikeresen mentve!"))
+                    .addOnSuccessListener(aVoid -> Log.d("Firestore", "StudySession sikeresen mentve, ID: " + newId))
                     .addOnFailureListener(e -> Log.e("Firestore", "Hiba Firestore mentésnél", e));
         });
     }
@@ -66,7 +67,7 @@ public class StudyRepository {
         });
     }
 
-    // 🔹 4️⃣ Pontszám frissítése mind Room-ban, mind Firestore-ban
+
     public void updateScore(UserScore score) {
         executorService.execute(() -> {
             UserScore existing = userScoreDao.getScoreByUserId(score.getUserId());
@@ -84,7 +85,7 @@ public class StudyRepository {
         });
     }
 
-    // 🔹 5️⃣ Adatok lekérése Firestore-ból és Room-ból
+
     public LiveData<List<Task>> getAllTasks() {
         return taskDao.getAllTasks();
     }
@@ -192,7 +193,7 @@ public class StudyRepository {
                     userScoreRef.set(newUserScore)
                             .addOnSuccessListener(aVoid -> Log.d("Firestore", "Pontszám inicializálva Firestore-ban."))
                             .addOnFailureListener(e -> Log.e("Firestore", "Hiba történt az inicializálás során.", e));
-                    updateScore(newUserScore); // 🔹 Helyileg is frissítjük
+                    updateScore(newUserScore);
                 }
             } else {
                 Log.e("Firestore", "Hiba Firestore lekérdezésnél", task.getException());

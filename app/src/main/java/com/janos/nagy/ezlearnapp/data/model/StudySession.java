@@ -11,7 +11,7 @@ public class StudySession {
     private long startTime;
     private long endTime;
     private long duration;
-
+    private String userId;
     private String sessionType;
 
     public StudySession(long startTime, String sessionType) {
@@ -62,6 +62,8 @@ public class StudySession {
     public String getSessionType() { return sessionType; }
 
     public void setSessionType(String sessionType) { this.sessionType = sessionType; }
+    public void setUserId(String userId) { this.userId = userId; }
+    public String getUserId() { return userId; }
 
 
 }

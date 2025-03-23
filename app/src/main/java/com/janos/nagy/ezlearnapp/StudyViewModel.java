@@ -20,18 +20,17 @@ public class StudyViewModel extends ViewModel {
     private final MutableLiveData<StudySession> currentSession = new MutableLiveData<>();
     private final LiveData<UserScore> userScore;
     private CountDownTimer pomodoroTimer;
-    private long pomodoroDuration = 25 * 60 * 1000;
+    private long pomodoroDuration = 25 * 60 * 1000; // Alapértelmezett 25 perc milliszekundumban
     private final String userId;
     private final MutableLiveData<Boolean> isPomodoroRunning = new MutableLiveData<>(false);
 
     public StudyViewModel(Application application, String userId) {
         this.repository = new StudyRepository(application);
         this.userId = userId;
-        remainingTime.setValue(pomodoroDuration / 1000);
-        StudySession initialSession = new StudySession(System.currentTimeMillis(), "pomodoro");
-        currentSession.setValue(initialSession);
-        repository.insertSession(initialSession);
+        remainingTime.setValue(pomodoroDuration / 1000); // Alapértelmezett idő másodpercben
+        // Nem hozunk létre és nem mentünk StudySession-t itt
         userScore = repository.getScore(userId);
+        Log.d("StudyViewModel", "Constructor called for userId: " + userId);
     }
 
     public LiveData<Long> getRemainingTime() {
@@ -51,8 +50,8 @@ public class StudyViewModel extends ViewModel {
     }
 
     public void setPomodoroDuration(int minutes) {
-        pomodoroDuration = minutes * 60 * 1000; // milisec
-        if (!isPomodoroRunning.getValue()) {                //szerkesztes nem futasidoben
+        pomodoroDuration = minutes * 60 * 1000; // Milliszekundumra konvertálás
+        if (!isPomodoroRunning.getValue()) { // Csak akkor frissítjük, ha nem fut
             remainingTime.setValue(pomodoroDuration / 1000);
         }
         Log.d("StudyViewModel", "Pomodoro duration set to: " + minutes + " minutes");
@@ -63,17 +62,20 @@ public class StudyViewModel extends ViewModel {
             pomodoroTimer.cancel();
         }
 
+        // Új StudySession létrehozása csak itt, amikor a felhasználó elindítja
         StudySession session = new StudySession(System.currentTimeMillis(), "pomodoro");
+        session.setUserId(userId); // userId beállítása
         currentSession.setValue(session);
-        repository.insertSession(session);
+        repository.insertSession(session); // Mentés Room-ba és Firestore-ba
         isPomodoroRunning.setValue(true);
+        Log.d("StudyViewModel", "startPomodoro called, new session created for userId: " + userId);
 
         pomodoroTimer = new CountDownTimer(pomodoroDuration, 1000) {
             @Override
             public void onTick(long millisUntilFinished) {
                 remainingTime.setValue(millisUntilFinished / 1000);
                 if (millisUntilFinished % (60 * 1000) == 0) {
-                    updateScore(1); // 1 point per minute
+                    updateScore(1); // 1 pont percenként
                     Log.d("StudyViewModel", "Added 1 point during tick. Current score: " + (userScore.getValue() != null ? userScore.getValue().getScore() : 0));
                 }
             }
@@ -85,18 +87,18 @@ public class StudyViewModel extends ViewModel {
                 if (completedSession != null) {
                     completedSession.setEndTime(System.currentTimeMillis());
                     currentSession.setValue(completedSession);
-                    repository.updateSession(completedSession);
-                    int pointsToAdd = (int) (pomodoroDuration / (60 * 1000)); // Convert duration to minutes
+                    repository.updateSession(completedSession); // Frissítés a befejezéskor
+                    int pointsToAdd = (int) (pomodoroDuration / (60 * 1000)); // Pontok a teljes időtartam alapján
                     updateScore(pointsToAdd);
                     Log.d("StudyViewModel", "Pomodoro finished. Added " + pointsToAdd + " points. New score: " + (userScore.getValue() != null ? userScore.getValue().getScore() : 0));
                 }
-                stopPomodoro(false); // End the session
+                stopPomodoro(false); // Befejezés
             }
         }.start();
     }
 
     public void stopPomodoro() {
-        stopPomodoro(true);
+        stopPomodoro(true); // Pontok hozzáadásával állítjuk le
     }
 
     private void stopPomodoro(boolean addPoints) {
@@ -104,14 +106,15 @@ public class StudyViewModel extends ViewModel {
             pomodoroTimer.cancel();
             pomodoroTimer = null;
         }
-        remainingTime.setValue(pomodoroDuration / 1000);
+        remainingTime.setValue(pomodoroDuration / 1000); // Visszaállítás az alapértelmezett időre
         StudySession session = currentSession.getValue();
         if (session != null) {
             session.setEndTime(System.currentTimeMillis());
             currentSession.setValue(session);
-            repository.updateSession(session);
+            repository.updateSession(session); // Frissítés Room-ban és Firestore-ban
             if (addPoints) {
-                long durationInMinutes = session.getDuration();
+                long elapsedTime = session.getEndTime() - session.getStartTime();
+                long durationInMinutes = elapsedTime / (60 * 1000); // Eltelt idő percekben
                 updateScore((int) durationInMinutes);
                 Log.d("StudyViewModel", "Pomodoro stopped. Added " + durationInMinutes + " points. New score: " + (userScore.getValue() != null ? userScore.getValue().getScore() : 0));
             }
