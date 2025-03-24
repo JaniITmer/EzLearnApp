@@ -58,11 +58,13 @@ public class StudyRepository {
 
     public void insertTask(Task task) {
         executorService.execute(() -> {
-            taskDao.insertTask(task);
+
+            long newId = taskDao.insertTask(task);
+            task.setId((int) newId);
             firestore.collection("tasks")
-                    .document(task.getTaskId())
-                    .set(task, SetOptions.merge()) // Megőrzi a meglévő adatokat
-                    .addOnSuccessListener(aVoid -> Log.d("Firestore", "Task sikeresen mentve!"))
+                    .document(String.valueOf(newId))
+                    .set(task, SetOptions.merge())
+                    .addOnSuccessListener(aVoid -> Log.d("Firestore", "Task sikeresen mentve, ID: " + newId))
                     .addOnFailureListener(e -> Log.e("Firestore", "Hiba Firestore mentésnél", e));
         });
     }
@@ -86,9 +88,10 @@ public class StudyRepository {
     }
 
 
-    public LiveData<List<Task>> getAllTasks() {
-        return taskDao.getAllTasks();
+    public LiveData<List<Task>> getTasksByUserId(String userId) {
+        return taskDao.getTasksByUserId(userId);
     }
+
 
     public LiveData<UserScore> getScore(String userId) {
         return userScoreDao.getScoreByUserIdLiveData(userId);
