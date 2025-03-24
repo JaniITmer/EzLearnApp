@@ -1,6 +1,8 @@
 package com.janos.nagy.ezlearnapp.ui.fragments;
 
+import android.Manifest;
 import android.app.AlertDialog;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -11,6 +13,8 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
@@ -29,6 +33,18 @@ public class PomodoroFragment extends Fragment {
     private TextView scoreText;
     private Button startButton;
 
+    private ActivityResultLauncher<String> requestPermissionLauncher;
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        requestPermissionLauncher = registerForActivityResult(new ActivityResultContracts.RequestPermission(), isGranted -> {
+            if (!isGranted) {
+                Toast.makeText(getContext(), "Értesítések engedélyezése szükséges!", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         Log.d("PomodoroFragment", "onCreateView called");
@@ -40,7 +56,9 @@ public class PomodoroFragment extends Fragment {
 
         FirebaseAuth mAuth = FirebaseAuth.getInstance();
         FirebaseUser currentUser = mAuth.getCurrentUser();
-
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            requestPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS);
+        }
         if (currentUser != null) {
             String userId = currentUser.getUid();
             StudyViewModelFactory factory = new StudyViewModelFactory(requireActivity().getApplication(), userId);
