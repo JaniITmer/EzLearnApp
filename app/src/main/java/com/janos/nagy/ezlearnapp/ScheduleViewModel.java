@@ -23,6 +23,7 @@ public class ScheduleViewModel extends AndroidViewModel {
 
 
         FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+
         if (currentUser != null) {
             userId = currentUser.getUid();
         } else {
@@ -44,7 +45,20 @@ public class ScheduleViewModel extends AndroidViewModel {
             repository.insertTask(task);
         }
     }
+    public void completeTask(Task task){
+            if(userId!=null){
+                task.setCompleted(true);
+                repository.updateTask(task);
 
+            }
+
+    }
+
+    public void deleteTask(Task task){
+        if(userId!=null){
+            repository.deleteTask(task);
+        }
+    }
     public String getUserId() {
         return userId;
     }

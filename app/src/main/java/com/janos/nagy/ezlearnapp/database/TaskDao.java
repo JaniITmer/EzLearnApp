@@ -2,6 +2,7 @@ package com.janos.nagy.ezlearnapp.database;
 
 import androidx.lifecycle.LiveData;
 import androidx.room.Dao;
+import androidx.room.Delete;
 import androidx.room.Insert;
 import androidx.room.Query;
 import androidx.room.Update;
@@ -18,6 +19,9 @@ public interface TaskDao {
     @Update
     void updateTask(Task task);
 
+
+    @Delete
+    void deleteTask(Task task);
     @Query("SELECT * FROM tasks WHERE userId = :userId")
     LiveData<List<Task>> getTasksByUserId(String userId);
 }

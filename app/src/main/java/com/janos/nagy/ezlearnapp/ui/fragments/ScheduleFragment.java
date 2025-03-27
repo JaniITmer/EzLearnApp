@@ -18,12 +18,13 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.janos.nagy.ezlearnapp.R;
 import com.janos.nagy.ezlearnapp.ScheduleViewModel;
+import com.janos.nagy.ezlearnapp.data.model.Task;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
-public class ScheduleFragment extends Fragment {
+public class ScheduleFragment extends Fragment implements TaskAdapter.OnTaskActionListener {
     private ScheduleViewModel viewModel;
     private RecyclerView recyclerView;
     private TaskAdapter adapter;
@@ -42,17 +43,18 @@ public class ScheduleFragment extends Fragment {
 
         recyclerView = view.findViewById(R.id.taskRecyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        adapter = new TaskAdapter();
+        adapter = new TaskAdapter(this);
         recyclerView.setAdapter(adapter);
 
         viewModel = new ViewModelProvider(this).get(ScheduleViewModel.class);
-        viewModel.getTasks().observe(getViewLifecycleOwner(), tasks -> adapter.setTasks(tasks));
+        viewModel.getTasks().observe(getViewLifecycleOwner(), tasks -> {
+            adapter.setTasks(tasks);
+        });
 
         view.findViewById(R.id.addTaskButton).setOnClickListener(v -> showAddTaskDialog());
 
         return view;
     }
-
     private void showAddTaskDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
         builder.setTitle("Új feladat hozzáadása");
@@ -72,7 +74,7 @@ public class ScheduleFragment extends Fragment {
             boolean isCompleted = completedCheckBox.isChecked();
 
             if (title.isEmpty() || deadlineStr.isEmpty()) {
-                Toast.makeText(getContext(), "A név és a határidő kötelező!", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), "A név és a határidő megadása kötelező!", Toast.LENGTH_SHORT).show();
                 return;
             }
 
@@ -81,23 +83,36 @@ public class ScheduleFragment extends Fragment {
                 Date deadlineDate = sdf.parse(deadlineStr);
                 long deadline = deadlineDate.getTime();
 
-                int pomodoroCount = 1; // Alapértelmezett érték
+                int pomodoroCount = 1;
                 if (!pomodoroCountStr.isEmpty()) {
                     pomodoroCount = Integer.parseInt(pomodoroCountStr);
                     if (pomodoroCount <= 0) {
-                        Toast.makeText(getContext(), "A Pomodoro szám pozitív kell legyen!", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getContext(), "A Pomodoro szám pozitínak kell lennie!", Toast.LENGTH_SHORT).show();
                         return;
                     }
                 }
 
                 viewModel.addTask(title, deadline, pomodoroCount, isCompleted);
-                Toast.makeText(getContext(), "Feladat hozzáadva!", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), "Feladat sikeresen hozzáadva!", Toast.LENGTH_SHORT).show();
             } catch (Exception e) {
-                Toast.makeText(getContext(), "Hibás dátumformátum! (yyyy-MM-dd)", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), "Hibás a dátum formátuma! (yyyy-MM-dd)", Toast.LENGTH_SHORT).show();
             }
         });
 
         builder.setNegativeButton("Mégse", (dialog, which) -> dialog.cancel());
         builder.show();
+    }
+
+    @Override
+    public void onCompleteTask(Task task) {
+        viewModel.completeTask(task);
+        Toast.makeText(getContext(), "Feladat késznek lett megjelölve!", Toast.LENGTH_SHORT).show();
+        adapter.notifyDataSetChanged();
+    }
+
+    @Override
+    public void onDeleteTask(Task task) {
+        viewModel.deleteTask(task);
+        Toast.makeText(getContext(), "Feladat sikeresen törölve!", Toast.LENGTH_SHORT).show();
     }
 }

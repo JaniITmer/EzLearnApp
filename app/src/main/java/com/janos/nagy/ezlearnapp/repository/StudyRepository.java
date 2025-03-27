@@ -70,6 +70,24 @@ public class StudyRepository {
     }
 
 
+    public void updateTask(Task task){
+        executorService.execute(()->{
+            taskDao.updateTask(task);
+            firestore.collection("tasks")
+                    .document(String.valueOf(task.getId()))
+                    .set(task,SetOptions.merge());
+        });
+    }
+
+    public void deleteTask(Task task){
+        executorService.execute(()->{
+            taskDao.deleteTask(task);
+            firestore.collection("tasks")
+                    .document(String.valueOf(task.getId()))
+                    .delete();
+        });
+    }
+
     public void updateScore(UserScore score) {
         executorService.execute(() -> {
             UserScore existing = userScoreDao.getScoreByUserId(score.getUserId());
