@@ -28,12 +28,12 @@ public class StudyViewModel extends ViewModel {
     private long pomodoroDuration = 25 * 60 * 1000;
     private final String userId;
     private final MutableLiveData<Boolean> isPomodoroRunning = new MutableLiveData<>(false);
-    private final Application application; // Hozzáadva az értesítéshez
+    private final Application application;
 
     public StudyViewModel(Application application, String userId) {
         this.repository = new StudyRepository(application);
         this.userId = userId;
-        this.application = application; // Application kontextus mentése
+        this.application = application;
         remainingTime.setValue(pomodoroDuration / 1000);
         userScore = repository.getScore(userId);
         Log.d("StudyViewModel", "Constructor called for userId: " + userId);
@@ -98,7 +98,7 @@ public class StudyViewModel extends ViewModel {
                     Log.d("StudyViewModel", "Pomodoro finished. Added " + pointsToAdd + " points.");
                 }
                 stopPomodoro(false);
-                sendPomodoroFinishedNotification(); // értesítés küldés
+                sendPomodoroFinishedNotification();
             }
         }.start();
     }
@@ -156,7 +156,7 @@ public class StudyViewModel extends ViewModel {
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         PendingIntent pendingIntent = PendingIntent.getActivity(application, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
 
-        // értesítés létrehozása
+
         NotificationCompat.Builder builder = new NotificationCompat.Builder(application, EzLearnApplication.CHANNEL_ID)
                 .setSmallIcon(R.drawable.ic_launcher_foreground)
                 .setContentTitle("Pomodoro véget ért")
@@ -165,7 +165,7 @@ public class StudyViewModel extends ViewModel {
                 .setContentIntent(pendingIntent)
                 .setAutoCancel(true);
 
-        // értesítés megjelenítése
+
         notificationManager.notify(1, builder.build());
         Log.d("StudyViewModel", "Pomodoro finished notification sent.");
     }

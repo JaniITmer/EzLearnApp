@@ -25,7 +25,7 @@ public class RegisterActivity extends AppCompatActivity {
         setContentView(R.layout.activity_register);
 
         auth = FirebaseAuth.getInstance();
-        database = AppDatabase.getInstance(this); // Adatbázis példány
+        database = AppDatabase.getInstance(this);
 
         EditText emailField = findViewById(R.id.email_field);
         EditText passwordField = findViewById(R.id.password_field);
@@ -49,10 +49,10 @@ public class RegisterActivity extends AppCompatActivity {
                     .addOnCompleteListener(task -> {
                         if (task.isSuccessful()) {
                             String userId = auth.getCurrentUser().getUid();
-                            String userName = email.split("@")[0]; // Egyszerű név generálás
+                            String userName = email.split("@")[0];
 
-                            // Felhasználó mentése a Room adatbázisba
-                            User user = new User(userId, userName, 0); // Kezdetben 0 pont
+
+                            User user = new User(userId, userName, 0);
                             new Thread(() -> database.userDao().insertUser(user)).start();
 
                             Toast.makeText(RegisterActivity.this, "Sikeres Regisztráció!", Toast.LENGTH_SHORT).show();

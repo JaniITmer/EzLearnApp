@@ -26,35 +26,30 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         mAuth = FirebaseAuth.getInstance();
 
-        // Ellenőrizd, hogy van-e bejelentkezett felhasználó
+
         FirebaseUser currentUser = mAuth.getCurrentUser();
 
-        // Ha be van jelentkezve a felhasználó, nyisd meg a HomeActivity-t
+
         if (currentUser != null) {
-            // Ha be van jelentkezve, indítsd a HomeActivity-t
+
             Intent intent = new Intent(MainActivity.this, HomeActivity.class);
             startActivity(intent);
-            finish();  // A MainActivity-t lezárjuk, hogy ne lehessen visszalépni
+            finish();
         } else {
-            // Első indítás ellenőrzése
             boolean isFirstRun = getSharedPreferences("AppPrefs", MODE_PRIVATE).getBoolean("isFirstRun", true);
             if (isFirstRun) {
-                // Onboarding képernyő megnyitása
+
                 Intent intent = new Intent(MainActivity.this, OnboardingActivity.class);
                 startActivity(intent);
                 finish();
             } else {
-                // Normál indítás
                 setContentView(R.layout.activity_main);
-
-                // Hivatkozás a regisztráció gombra
                 Button registerButton = findViewById(R.id.button);
 
-                // Gomb eseménykezelője
                 registerButton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        // Nyisd meg a RegisterActivity-t
+
                         Intent intent = new Intent(MainActivity.this, RegisterActivity.class);
                         startActivity(intent);
                     }
@@ -62,19 +57,15 @@ public class MainActivity extends AppCompatActivity {
 
                 });
 
-                // Hivatkozás a login gombra
                 Button loginButton = findViewById(R.id.button2);
-
-                // Gomb eseménykezelője
                 loginButton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        // Nyisd meg a LoginActivity-t
                         Intent intent = new Intent(MainActivity.this, LoginActivity.class);
                         startActivity(intent);
                     }
                 });
-                // Értesítési engedély automatikus ellenőrzése és kérése
+
                 if (!isNotificationServiceEnabled()) {
                     requestNotificationPermission();
                 }
@@ -82,13 +73,12 @@ public class MainActivity extends AppCompatActivity {
         }
 
     }
-    // Értesítési engedély kérése
+
     private void requestNotificationPermission() {
         Intent intent = new Intent(Settings.ACTION_NOTIFICATION_LISTENER_SETTINGS);
         startActivity(intent);
     }
 
-    // Ellenőrzi, hogy az értesítési szolgáltatás engedélyezve van-e
     private boolean isNotificationServiceEnabled() {
         ComponentName cn = new ComponentName(this, MyNotificationService.class);
         String flat = Settings.Secure.getString(getContentResolver(), "enabled_notification_listeners");

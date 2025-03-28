@@ -20,8 +20,6 @@ public class ScheduleViewModel extends AndroidViewModel {
     public ScheduleViewModel(@NonNull Application application) {
         super(application);
         repository = new StudyRepository(application);
-
-
         FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
 
         if (currentUser != null) {
@@ -49,7 +47,6 @@ public class ScheduleViewModel extends AndroidViewModel {
             if(userId!=null){
                 task.setCompleted(true);
                 repository.updateTask(task);
-
             }
 
     }

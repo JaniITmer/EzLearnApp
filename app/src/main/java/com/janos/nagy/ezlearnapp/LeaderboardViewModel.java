@@ -27,7 +27,7 @@ public class LeaderboardViewModel extends ViewModel {
 
     public void setUserId(String newUserId) {
         if (!newUserId.equals(userId.getValue())) {
-            userId.setValue(newUserId); // Csak akkor állítjuk be, ha változott
+            userId.setValue(newUserId);
         }
     }
 

@@ -39,7 +39,7 @@ public class LessonsFragment extends Fragment {
         recyclerView = view.findViewById(R.id.lessonRecyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
-        // Adapter inicializálása kattintás és törlés eseményekkel
+
         adapter = new LessonAdapter(new LessonAdapter.OnLessonClickListener() {
             @Override
             public void onLessonClick(Lesson lesson) {
@@ -103,7 +103,7 @@ public class LessonsFragment extends Fragment {
         new AlertDialog.Builder(getContext())
                 .setTitle("Biztos, hogy törölni szeretnéd ezt a leckét?")
                 .setPositiveButton("Igen", (dialog, which) -> {
-                    viewModel.deleteLesson(lesson); // Lecke törlése a ViewModel-ben
+                    viewModel.deleteLesson(lesson);
                     Toast.makeText(getContext(), "Lecke törölve!", Toast.LENGTH_SHORT).show();
                 })
                 .setNegativeButton("Nem", (dialog, which) -> dialog.cancel())

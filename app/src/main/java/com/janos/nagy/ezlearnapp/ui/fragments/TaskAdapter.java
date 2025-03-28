@@ -42,7 +42,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
         String status = task.isCompleted() ? "Teljesítve" : "Nincs teljesítve";
         holder.textView.setText(task.getTitle() + " (Határidő: " + deadlineStr + ", " + task.getPomodoroCount() + " Pomodoro, " + status + ")");
 
-        // Kész gomb logika
+
         holder.completeButton.setEnabled(!task.isCompleted());
         holder.completeButton.setText(task.isCompleted() ? "Teljesítve" : "Kész");
         holder.completeButton.setOnClickListener(v -> {
@@ -52,7 +52,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
             }
         });
 
-        // Törlés gomb logika
+
         holder.deleteButton.setOnClickListener(v -> {
             actionListener.onDeleteTask(task);
             notifyItemRemoved(position); //
@@ -66,7 +66,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
 
     public void setTasks(List<Task> tasks) {
         this.tasks = tasks;
-        notifyDataSetChanged(); // Teljes lista frissítése
+        notifyDataSetChanged();
     }
 
     static class TaskViewHolder extends RecyclerView.ViewHolder {

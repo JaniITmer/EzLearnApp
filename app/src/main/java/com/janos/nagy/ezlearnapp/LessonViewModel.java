@@ -21,32 +21,29 @@ public class LessonViewModel extends AndroidViewModel {
     public LessonViewModel(@NonNull Application application) {
         super(application);
         repository = new StudyRepository(application);
-        // Lekérjük a jelenleg bejelentkezett felhasználó UID-jét
+
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         if (user != null) {
             currentUserId = user.getUid();
-            repository.syncLessonsFromFirestore(currentUserId);  // Szinkronizáció indítása itt
+            repository.syncLessonsFromFirestore(currentUserId);
         } else {
-            // Ha nincs bejelentkezett felhasználó, kezeljük a helyzetet
-            currentUserId = null; // Vagy egy default érték, pl. "guest"
+
+            currentUserId = null;
         }
     }
 
     public void deleteLesson(Lesson lesson) {
-        repository.deleteLesson(lesson);  // Kérés a repository felé
+        repository.deleteLesson(lesson);
     }
 
     public LiveData<List<Lesson>> getLessons() {
-        // A Firebase UID-t használjuk a leckék lekérdezéséhez
         return repository.getLessons(currentUserId);
     }
 
     public void addLesson(String title, String filePath) {
-        // A Firebase UID-t használjuk az új lecke mentéséhez
         if (currentUserId != null) {
             repository.insertLesson(new Lesson(title, filePath, currentUserId));
         } else {
-
             Log.e("LessonViewModel", "Nincs bejelentkezett felhasználó, a lecke nem menthető.");
         }
     }

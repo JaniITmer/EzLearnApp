@@ -24,7 +24,7 @@ public class HomeActivity extends AppCompatActivity {
         setContentView(R.layout.activity_home);
         Log.d(TAG, "Layout loaded: " + R.layout.activity_home);
 
-        // Ellenőrizzük, hogy a FragmentContainerView betöltődik-e
+
         View navHostView = findViewById(R.id.nav_host_fragment);
         if (navHostView == null) {
             Log.e(TAG, "FragmentContainerView not found with ID: " + R.id.nav_host_fragment);
@@ -41,7 +41,7 @@ public class HomeActivity extends AppCompatActivity {
             Log.d(TAG, "BottomNavigationView found with ID: " + R.id.nav_view);
         }
 
-        // Ellenőrizzük, hogy a NavHostFragment létezik-e
+
         FragmentManager fragmentManager = getSupportFragmentManager();
         NavHostFragment navHostFragment = (NavHostFragment) fragmentManager.findFragmentById(R.id.nav_host_fragment);
         NavController navController;
@@ -53,7 +53,7 @@ public class HomeActivity extends AppCompatActivity {
                 fragmentManager.beginTransaction()
                         .replace(R.id.nav_host_fragment, navHostFragment)
                         .setPrimaryNavigationFragment(navHostFragment)
-                        .commitNow(); // commitNow() biztosítja, hogy a fragment azonnal hozzákapcsolódjon
+                        .commitNow();
                 navController = navHostFragment.getNavController();
             } catch (Exception e) {
                 Log.e(TAG, "Failed to create or attach NavHostFragment: " + e.getMessage(), e);

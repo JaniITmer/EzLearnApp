@@ -18,7 +18,7 @@ public class LoginActivity extends AppCompatActivity {
     private Button loginButton;
 
     private FirebaseAuth mAuth;
-    private StudyViewModel studyViewModel; // StudyViewModel hozzáadása
+    private StudyViewModel studyViewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,25 +45,19 @@ public class LoginActivity extends AppCompatActivity {
 
                                 FirebaseUser user = mAuth.getCurrentUser();
                                 if (user != null) {
-                                    String userId = user.getUid(); // Felhasználó ID lekérése
+                                    String userId = user.getUid();
 
                                     Toast.makeText(LoginActivity.this, "Sikeres bejelentkezés", Toast.LENGTH_SHORT).show();
 
-                                    // StudyViewModel inicializálása a felhasználó ID-jával
                                     studyViewModel = new StudyViewModel(getApplication(), userId);
-
-                                    // Szinkronizálás a Firestore-ból való pontszámok letöltésére
                                     studyViewModel.syncScoresFromFirestore();
 
-                                    // Ugrás a fő képernyőre (HomeActivity)
                                     Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
                                     startActivity(intent);
 
-                                    // A LoginActivity bezárása, hogy ne lehessen visszalépni
                                     finish();
                                 }
                             } else {
-                                // Hiba kezelése
                                 Toast.makeText(LoginActivity.this, "Authentication failed: " + task.getException().getMessage(), Toast.LENGTH_LONG).show();
                             }
                         });
