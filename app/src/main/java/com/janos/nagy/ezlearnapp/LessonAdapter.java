@@ -44,7 +44,7 @@ public class LessonAdapter extends RecyclerView.Adapter<LessonAdapter.LessonView
         Lesson lesson = lessons.get(position);
         holder.textView.setText(lesson.getTitle());
 
-        // Törlés gomb hozzáadása
+
         holder.deleteButton.setOnClickListener(v -> {
             Log.d(TAG, "onBindViewHolder: deleteButton clicked for lesson: " + lesson.getTitle());
             if (listener != null) {
@@ -74,13 +74,13 @@ public class LessonAdapter extends RecyclerView.Adapter<LessonAdapter.LessonView
 
     static class LessonViewHolder extends RecyclerView.ViewHolder {
         TextView textView;
-        Button deleteButton; // Törlés gomb
+        Button deleteButton;
 
         LessonViewHolder(View itemView) {
             super(itemView);
             Log.d(TAG, "LessonViewHolder: created");
             textView = itemView.findViewById(R.id.lessonTitleTextView);
-            deleteButton = itemView.findViewById(R.id.deleteButton); // Gomb referencia
+            deleteButton = itemView.findViewById(R.id.deleteButton);
         }
     }
 }

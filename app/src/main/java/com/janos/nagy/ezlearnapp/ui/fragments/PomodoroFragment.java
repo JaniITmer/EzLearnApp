@@ -64,7 +64,7 @@ public class PomodoroFragment extends Fragment {
             StudyViewModelFactory factory = new StudyViewModelFactory(requireActivity().getApplication(), userId);
             viewModel = new ViewModelProvider(this, factory).get(StudyViewModel.class);
 
-            // Timer text observation
+
             viewModel.getRemainingTime().observe(getViewLifecycleOwner(), remainingTime -> {
                 if (remainingTime != null) {
                     int minutes = (int) (remainingTime / 60);
@@ -87,25 +87,25 @@ public class PomodoroFragment extends Fragment {
                 }
             });
 
-            // Pomodoro running state observation
+
             viewModel.isPomodoroRunning().observe(getViewLifecycleOwner(), isRunning -> {
                 if (isRunning) {
                     startButton.setText("Tanulás befejezése");
-                    timerText.setEnabled(false); // Disable clicking while running
+                    timerText.setEnabled(false);
                 } else {
                     startButton.setText("Tanulás elkezdése");
-                    timerText.setEnabled(true); // Enable clicking when not running
+                    timerText.setEnabled(true);
                 }
             });
 
-            // Click listener for timerText to set duration
+
             timerText.setOnClickListener(v -> {
                 if (!viewModel.isPomodoroRunning().getValue()) {
                     showTimePickerDialog();
                 }
             });
 
-            // Start/Stop button listener
+
             startButton.setOnClickListener(v -> {
                 if (viewModel.isPomodoroRunning().getValue()) {
                     viewModel.stopPomodoro();

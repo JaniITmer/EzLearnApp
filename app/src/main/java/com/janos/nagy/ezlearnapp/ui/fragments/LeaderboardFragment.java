@@ -47,12 +47,12 @@ public class LeaderboardFragment extends Fragment {
         recyclerView = view.findViewById(R.id.leaderboard_recycler_view);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
-        // 🔹 ADAPTER INICIALIZÁLÁSA ÜRES LISTÁVAL
+
         adapter = new LeaderboardAdapter(getContext(), new ArrayList<>(), userId);
         recyclerView.setAdapter(adapter);
 
         viewModel.getLeaderboard().observe(getViewLifecycleOwner(), userScores -> {
-            // 🔹 Ha a megfigyelt adatok frissülnek, frissítjük az adaptert
+
             adapter.updateData(userScores);
         });
 

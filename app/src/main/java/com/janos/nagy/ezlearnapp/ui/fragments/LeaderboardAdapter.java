@@ -40,7 +40,7 @@ public class LeaderboardAdapter extends RecyclerView.Adapter<LeaderboardAdapter.
         holder.rankTextView.setText((position + 1) + ".");
         holder.scoreTextView.setText("Pontszám: " + userScore.getScore());
 
-        // Ha ez a saját felhasználó, színezzük meg másra
+
         if (userScore.getUserId().equals(currentUserId)) {
             holder.itemView.setBackgroundColor(ContextCompat.getColor(context, R.color.teal_200));
         } else {
