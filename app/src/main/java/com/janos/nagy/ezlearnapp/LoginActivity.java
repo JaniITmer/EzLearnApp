@@ -11,6 +11,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.janos.nagy.ezlearnapp.repository.StudyRepository;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -38,23 +39,23 @@ public class LoginActivity extends AppCompatActivity {
             if (email.isEmpty() || password.isEmpty()) {
                 Toast.makeText(LoginActivity.this, "Minden mezőt tölts ki!", Toast.LENGTH_SHORT).show();
             } else {
-
                 mAuth.signInWithEmailAndPassword(email, password)
                         .addOnCompleteListener(LoginActivity.this, task -> {
                             if (task.isSuccessful()) {
-
                                 FirebaseUser user = mAuth.getCurrentUser();
                                 if (user != null) {
                                     String userId = user.getUid();
 
                                     Toast.makeText(LoginActivity.this, "Sikeres bejelentkezés", Toast.LENGTH_SHORT).show();
 
-                                    studyViewModel = new StudyViewModel(getApplication(), userId);
+
+                                    StudyRepository repository = new StudyRepository(getApplication());
+
+                                    studyViewModel = new StudyViewModel(getApplication(), userId, repository);
                                     studyViewModel.syncScoresFromFirestore();
 
                                     Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
                                     startActivity(intent);
-
                                     finish();
                                 }
                             } else {

@@ -30,15 +30,17 @@ public class StudyViewModel extends ViewModel {
     private final MutableLiveData<Boolean> isPomodoroRunning = new MutableLiveData<>(false);
     private final Application application;
 
-    public StudyViewModel(Application application, String userId) {
-        this.repository = new StudyRepository(application);
+    public StudyViewModel(Application application, String userId, StudyRepository repository) {
+        this.repository = repository; // A repository-t kívülről kapjuk
         this.userId = userId;
         this.application = application;
         remainingTime.setValue(pomodoroDuration / 1000);
         userScore = repository.getScore(userId);
         Log.d("StudyViewModel", "Constructor called for userId: " + userId);
     }
-
+    StudyRepository getRepository() {
+        return repository;
+    }
     public LiveData<Long> getRemainingTime() {
         return remainingTime;
     }
@@ -107,7 +109,7 @@ public class StudyViewModel extends ViewModel {
         stopPomodoro(true);
     }
 
-    private void stopPomodoro(boolean addPoints) {
+    protected void stopPomodoro(boolean addPoints) {
         if (pomodoroTimer != null) {
             pomodoroTimer.cancel();
             pomodoroTimer = null;
