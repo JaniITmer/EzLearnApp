@@ -19,8 +19,6 @@ import org.robolectric.RuntimeEnvironment;
 import static org.mockito.Mockito.*;
 import static org.junit.Assert.*;
 
-import android.app.Application;
-import android.util.Log;
 
 
 @RunWith(RobolectricTestRunner.class)
