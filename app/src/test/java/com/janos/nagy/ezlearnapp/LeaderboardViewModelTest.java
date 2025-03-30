@@ -56,7 +56,7 @@ public class LeaderboardViewModelTest {
             public void onChanged(UserScore userScore) {
                 assertNotNull(userScore);
                 assertEquals(newUserId, userScore.getUserId());
-                assertEquals(100,mockUserScore.getScore());
+                assertEquals(100,userScore.getScore());
             }
         });
     }

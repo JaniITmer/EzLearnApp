@@ -16,18 +16,20 @@ import java.util.List;
 
 public class LessonViewModel extends AndroidViewModel {
     private StudyRepository repository;
+    private FirebaseAuth firebaseAuth;
     private String currentUserId;
 
-    public LessonViewModel(@NonNull Application application) {
+    // Módosított konstruktor a tesztelhetőség érdekében
+    public LessonViewModel(@NonNull Application application, StudyRepository repository, FirebaseAuth firebaseAuth) {
         super(application);
-        repository = new StudyRepository(application);
+        this.repository = repository;
+        this.firebaseAuth = firebaseAuth;
 
-        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        FirebaseUser user = firebaseAuth.getCurrentUser();
         if (user != null) {
             currentUserId = user.getUid();
             repository.syncLessonsFromFirestore(currentUserId);
         } else {
-
             currentUserId = null;
         }
     }
