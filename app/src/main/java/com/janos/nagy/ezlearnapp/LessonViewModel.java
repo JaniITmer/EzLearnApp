@@ -6,6 +6,8 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
+import androidx.lifecycle.ViewModel;
+import androidx.lifecycle.ViewModelProvider;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -19,7 +21,7 @@ public class LessonViewModel extends AndroidViewModel {
     private FirebaseAuth firebaseAuth;
     private String currentUserId;
 
-    // Módosított konstruktor a tesztelhetőség érdekében
+
     public LessonViewModel(@NonNull Application application, StudyRepository repository, FirebaseAuth firebaseAuth) {
         super(application);
         this.repository = repository;
@@ -52,5 +54,27 @@ public class LessonViewModel extends AndroidViewModel {
 
     public String getCurrentUserId() {
         return currentUserId;
+    }
+
+
+    public static class Factory implements ViewModelProvider.Factory {
+        private final Application application;
+        private final StudyRepository repository;
+        private final FirebaseAuth firebaseAuth;
+
+        public Factory(Application application, StudyRepository repository, FirebaseAuth firebaseAuth) {
+            this.application = application;
+            this.repository = repository;
+            this.firebaseAuth = firebaseAuth;
+        }
+
+        @NonNull
+        @Override
+        public <T extends ViewModel> T create(@NonNull Class<T> modelClass) {
+            if (modelClass.isAssignableFrom(LessonViewModel.class)) {
+                return (T) new LessonViewModel(application, repository, firebaseAuth);
+            }
+            throw new IllegalArgumentException("Unknown ViewModel class");
+        }
     }
 }

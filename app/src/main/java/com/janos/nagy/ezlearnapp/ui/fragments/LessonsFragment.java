@@ -19,10 +19,12 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.firebase.auth.FirebaseAuth;
 import com.janos.nagy.ezlearnapp.LessonAdapter;
 import com.janos.nagy.ezlearnapp.LessonViewModel;
 import com.janos.nagy.ezlearnapp.R;
 import com.janos.nagy.ezlearnapp.data.model.Lesson;
+import com.janos.nagy.ezlearnapp.repository.StudyRepository;
 
 import java.io.File;
 
@@ -39,7 +41,6 @@ public class LessonsFragment extends Fragment {
         recyclerView = view.findViewById(R.id.lessonRecyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
-
         adapter = new LessonAdapter(new LessonAdapter.OnLessonClickListener() {
             @Override
             public void onLessonClick(Lesson lesson) {
@@ -53,7 +54,18 @@ public class LessonsFragment extends Fragment {
         });
         recyclerView.setAdapter(adapter);
 
-        viewModel = new ViewModelProvider(this).get(LessonViewModel.class);
+
+        StudyRepository repository = new StudyRepository(requireContext());
+        FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
+
+
+        LessonViewModel.Factory factory = new LessonViewModel.Factory(
+                requireActivity().getApplication(),
+                repository,
+                firebaseAuth
+        );
+        viewModel = new ViewModelProvider(this, factory).get(LessonViewModel.class);
+
         viewModel.getLessons().observe(getViewLifecycleOwner(), lessons -> adapter.setLessons(lessons));
 
         view.findViewById(R.id.uploadButton).setOnClickListener(v -> {
