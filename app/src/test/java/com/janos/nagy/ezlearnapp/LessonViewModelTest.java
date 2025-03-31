@@ -48,7 +48,7 @@ public class LessonViewModelTest {
         MockitoAnnotations.openMocks(this);
 
         when(firebaseAuth.getCurrentUser()).thenReturn(firebaseUser);
-        when(firebaseUser.getUid()).thenReturn("testUserId");
+        when(firebaseUser.getUid()).thenReturn("userId324");
 
         lessonViewModel = new LessonViewModel(RuntimeEnvironment.getApplication(), repository, firebaseAuth);
     }

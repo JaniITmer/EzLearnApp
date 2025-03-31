@@ -88,6 +88,8 @@ public class RegisterActivity extends AppCompatActivity {
                                                                 "Firestore mentés sikertelen: " + e.getMessage(),
                                                                 Toast.LENGTH_LONG).show();
                                                     });
+
+
                                         } else {
                                             Toast.makeText(RegisterActivity.this,
                                                     "Profil frissítése sikertelen: " + profileTask.getException().getMessage(),

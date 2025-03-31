@@ -14,6 +14,7 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
+import com.google.firebase.firestore.FirebaseFirestore;
 import com.janos.nagy.ezlearnapp.data.model.StudySession;
 import com.janos.nagy.ezlearnapp.data.model.UserScore;
 import com.janos.nagy.ezlearnapp.repository.StudyRepository;
@@ -29,18 +30,22 @@ public class StudyViewModel extends ViewModel {
     private final String userId;
     private final MutableLiveData<Boolean> isPomodoroRunning = new MutableLiveData<>(false);
     private final Application application;
+    private final FirebaseFirestore firestore; // Added Firestore field
 
     public StudyViewModel(Application application, String userId, StudyRepository repository) {
-        this.repository = repository; // A repository-t kívülről kapjuk
+        this.repository = repository;
         this.userId = userId;
         this.application = application;
+        this.firestore = FirebaseFirestore.getInstance(); // Initialize Firestore
         remainingTime.setValue(pomodoroDuration / 1000);
         userScore = repository.getScore(userId);
         Log.d("StudyViewModel", "Constructor called for userId: " + userId);
     }
+
     StudyRepository getRepository() {
         return repository;
     }
+
     public LiveData<Long> getRemainingTime() {
         return remainingTime;
     }
@@ -133,9 +138,29 @@ public class StudyViewModel extends ViewModel {
     private void updateScore(int points) {
         UserScore currentScore = userScore.getValue();
         int newScore = (currentScore != null ? currentScore.getScore() : 0) + points;
-        UserScore updatedScore = new UserScore(userId, newScore);
-        repository.updateScore(updatedScore);
-        Log.d("StudyViewModel", "Score updated. Points added: " + points + ", New total: " + newScore);
+        String name = (currentScore != null && currentScore.getName() != null) ? currentScore.getName() : null;
+
+        if (name == null && userId != null) {
+            // Fetch name from Firestore if not available
+            firestore.collection("users").document(userId).get()
+                    .addOnSuccessListener(documentSnapshot -> {
+                        String fetchedName = documentSnapshot.exists() ? documentSnapshot.getString("name") : "Névtelen";
+                        UserScore updatedScore = new UserScore(userId, newScore, fetchedName);
+                        repository.updateScore(updatedScore);
+                        Log.d("StudyViewModel", "Score updated with fetched name. Points added: " + points + ", New total: " + newScore);
+                    })
+                    .addOnFailureListener(e -> {
+                        // Fallback to "Névtelen" if fetch fails
+                        UserScore updatedScore = new UserScore(userId, newScore, "Névtelen");
+                        repository.updateScore(updatedScore);
+                        Log.d("StudyViewModel", "Score updated with default name. Points added: " + points + ", New total: " + newScore);
+                    });
+        } else {
+            // Use existing name if available
+            UserScore updatedScore = new UserScore(userId, newScore, name != null ? name : "Névtelen");
+            repository.updateScore(updatedScore);
+            Log.d("StudyViewModel", "Score updated. Points added: " + points + ", New total: " + newScore);
+        }
     }
 
     public void syncScoresFromFirestore() {
@@ -153,11 +178,9 @@ public class StudyViewModel extends ViewModel {
     private void sendPomodoroFinishedNotification() {
         NotificationManager notificationManager = (NotificationManager) application.getSystemService(Context.NOTIFICATION_SERVICE);
 
-
         Intent intent = new Intent(application, MainActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         PendingIntent pendingIntent = PendingIntent.getActivity(application, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
-
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(application, EzLearnApplication.CHANNEL_ID)
                 .setSmallIcon(R.drawable.ic_launcher_foreground)
@@ -166,7 +189,6 @@ public class StudyViewModel extends ViewModel {
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT)
                 .setContentIntent(pendingIntent)
                 .setAutoCancel(true);
-
 
         notificationManager.notify(1, builder.build());
         Log.d("StudyViewModel", "Pomodoro finished notification sent.");

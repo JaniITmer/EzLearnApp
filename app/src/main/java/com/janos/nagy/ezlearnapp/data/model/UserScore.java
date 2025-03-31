@@ -10,15 +10,16 @@ public class UserScore {
     @NonNull
     private String userId;
     private int score;
-
+    private String name;
 
     public UserScore() {
 
     }
-    public UserScore(String userId,int score){
+    public UserScore(String userId,int score,String name){
 
         this.userId=userId;
         this.score=score;
+        this.name = name;
     }
 
     @NonNull
@@ -27,6 +28,12 @@ public class UserScore {
     public int getScore(){return  score;}
     public void setScore(int score){this.score=score;}
 
+    public String getName() {
+        return name;
+    }
 
+    public void setName(String name) {
+        this.name = name;
+    }
 
 }

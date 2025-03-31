@@ -41,7 +41,7 @@ public class LeaderboardViewModelTest {
     @Test
     public void testSetUserId() {
         String newUserId = "testUserId";
-        UserScore mockUserScore = new UserScore(newUserId, 100);
+        UserScore mockUserScore = new UserScore(newUserId, 100,newUserId);
         MutableLiveData<UserScore> mockLiveData = new MutableLiveData<>();
         mockLiveData.setValue(mockUserScore);
 

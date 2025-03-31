@@ -24,16 +24,18 @@ import com.janos.nagy.ezlearnapp.R;
 import com.janos.nagy.ezlearnapp.StudyViewModel;
 import com.janos.nagy.ezlearnapp.StudyViewModelFactory;
 import com.janos.nagy.ezlearnapp.data.model.StudySession;
+import com.janos.nagy.ezlearnapp.repository.StudyRepository;
 import com.janos.nagy.ezlearnapp.repository.UserRepository;
 
 
 public class PomodoroFragment extends Fragment {
-    private StudyViewModel viewModel;
+    private StudyViewModel viewModel; // Class field
     private TextView timerText;
     private TextView scoreText;
     private Button startButton;
 
     private ActivityResultLauncher<String> requestPermissionLauncher;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -43,7 +45,6 @@ public class PomodoroFragment extends Fragment {
             }
         });
     }
-
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -56,14 +57,16 @@ public class PomodoroFragment extends Fragment {
 
         FirebaseAuth mAuth = FirebaseAuth.getInstance();
         FirebaseUser currentUser = mAuth.getCurrentUser();
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             requestPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS);
         }
-        if (currentUser != null) {
-            String userId = currentUser.getUid();
-            StudyViewModelFactory factory = new StudyViewModelFactory(requireActivity().getApplication(), userId);
-            viewModel = new ViewModelProvider(this, factory).get(StudyViewModel.class);
 
+        if (currentUser != null) {
+            StudyRepository repository = new StudyRepository(requireContext());
+            String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+            StudyViewModelFactory factory = new StudyViewModelFactory(requireActivity().getApplication(), userId, repository);
+            viewModel = new ViewModelProvider(this, factory).get(StudyViewModel.class); // Assign to class field
 
             viewModel.getRemainingTime().observe(getViewLifecycleOwner(), remainingTime -> {
                 if (remainingTime != null) {
@@ -77,7 +80,6 @@ public class PomodoroFragment extends Fragment {
                 }
             });
 
-            // Score observation
             viewModel.getUserScore().observe(getViewLifecycleOwner(), userScore -> {
                 if (userScore != null) {
                     scoreText.setText("Pontszám: " + userScore.getScore());
@@ -86,7 +88,6 @@ public class PomodoroFragment extends Fragment {
                     scoreText.setText("Pontszám: 0");
                 }
             });
-
 
             viewModel.isPomodoroRunning().observe(getViewLifecycleOwner(), isRunning -> {
                 if (isRunning) {
@@ -98,13 +99,11 @@ public class PomodoroFragment extends Fragment {
                 }
             });
 
-
             timerText.setOnClickListener(v -> {
                 if (!viewModel.isPomodoroRunning().getValue()) {
                     showTimePickerDialog();
                 }
             });
-
 
             startButton.setOnClickListener(v -> {
                 if (viewModel.isPomodoroRunning().getValue()) {
@@ -115,7 +114,6 @@ public class PomodoroFragment extends Fragment {
                     Log.d("PomodoroFragment", "Starting Pomodoro session");
                 }
             });
-
         } else {
             Log.e("PomodoroFragment", "Nincs bejelentkezve felhasználó!");
             Toast.makeText(getContext(), "Nincs bejelentkezve felhasználó!", Toast.LENGTH_SHORT).show();
@@ -139,7 +137,7 @@ public class PomodoroFragment extends Fragment {
                 try {
                     int minutes = Integer.parseInt(minutesStr);
                     if (minutes > 0) {
-                        viewModel.setPomodoroDuration(minutes);
+                        viewModel.setPomodoroDuration(minutes); // Line 144 - viewModel is now properly initialized
                         Toast.makeText(getContext(), "Időtartam beállítva: " + minutes + " perc", Toast.LENGTH_SHORT).show();
                     } else {
                         Toast.makeText(getContext(), "Az időtartam pozitív szám kell legyen!", Toast.LENGTH_SHORT).show();
