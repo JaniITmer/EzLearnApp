@@ -10,12 +10,12 @@ public class User {
     @NonNull
     private String id;
     private String name;
-    private int score;
+    private long lastNameChangeTimestamp;
 
-    public User(@NonNull String id, String name, int score) {
+    public User(@NonNull String id, String name, long lastNameChangeTimestamp) {
         this.id = id;
         this.name = name;
-        this.score = score;
+        this.lastNameChangeTimestamp = lastNameChangeTimestamp;
     }
 
     @NonNull
@@ -26,12 +26,13 @@ public class User {
     public String getName() {
         return name;
     }
+    
 
-    public int getScore() {
-        return score;
+    public long getLastNameChangeTimestamp() {
+        return lastNameChangeTimestamp;
     }
 
-    public void setScore(int score) {
-        this.score = score;
+    public void setLastNameChangeTimestamp(long lastNameChangeTimestamp) {
+        this.lastNameChangeTimestamp = lastNameChangeTimestamp;
     }
 }

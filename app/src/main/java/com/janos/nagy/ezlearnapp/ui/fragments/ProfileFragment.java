@@ -54,6 +54,7 @@ public class ProfileFragment extends Fragment {
                     .addOnSuccessListener(documentSnapshot -> {
                         if (documentSnapshot.exists()) {
                             String userName = documentSnapshot.getString("name");
+                            Long lastChange = documentSnapshot.getLong("lastNameChangeTimestamp");
                             userNameEditText.setText(userName != null && !userName.isEmpty() ? userName : "Nincs név");
                         } else {
                             userNameEditText.setText("Nincs név");
@@ -70,9 +71,27 @@ public class ProfileFragment extends Fragment {
             saveUserNameButton.setOnClickListener(v -> {
                 String newName = userNameEditText.getText().toString().trim();
                 if (!newName.isEmpty()) {
-                    User updatedUser = new User(userId, newName, 0); // Assuming score is not modified here
-                    userRepository.updateUser(updatedUser);
-                    Toast.makeText(getContext(), "Felhasználónév frissítve!", Toast.LENGTH_SHORT).show();
+                    firestore.collection("users")
+                            .document(userId)
+                            .get()
+                            .addOnSuccessListener(documentSnapshot -> {
+                                if (documentSnapshot.exists()) {
+                                    Long lastChange = documentSnapshot.getLong("lastNameChangeTimestamp");
+                                    long currentTime = System.currentTimeMillis();
+                                    long oneMonthInMillis = 30L * 24 * 60 * 60 * 1000; // Approx 30 days
+
+                                    if (lastChange == null || (currentTime - lastChange >= oneMonthInMillis)) {
+                                        User updatedUser = new User(userId, newName,currentTime);
+                                        userRepository.updateUser(updatedUser);
+                                        Toast.makeText(getContext(), "Felhasználónév frissítve!", Toast.LENGTH_SHORT).show();
+                                    } else {
+                                        long timeLeft = oneMonthInMillis - (currentTime - lastChange);
+                                        long daysLeft = timeLeft / (24 * 60 * 60 * 1000);
+                                        Toast.makeText(getContext(), "Még " + daysLeft + " nap, mire újra változtathatsz!", Toast.LENGTH_LONG).show();
+                                    }
+                                }
+                            })
+                            .addOnFailureListener(e -> Toast.makeText(getContext(), "Hiba történt!", Toast.LENGTH_SHORT).show());
                 } else {
                     Toast.makeText(getContext(), "A név nem lehet üres!", Toast.LENGTH_SHORT).show();
                 }

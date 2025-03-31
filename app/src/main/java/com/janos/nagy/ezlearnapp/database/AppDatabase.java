@@ -16,7 +16,7 @@ import com.janos.nagy.ezlearnapp.data.model.UserScore;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-@Database(entities = {StudySession.class, Task.class, UserScore.class, Lesson.class, User.class}, version = 5)
+@Database(entities = {StudySession.class, Task.class, UserScore.class, Lesson.class, User.class}, version = 6)
 public abstract class AppDatabase extends RoomDatabase {
 
     private static volatile AppDatabase INSTANCE;

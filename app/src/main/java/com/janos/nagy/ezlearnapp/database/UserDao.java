@@ -13,14 +13,13 @@ import com.janos.nagy.ezlearnapp.data.model.User;
 @Dao
 public interface UserDao {
     @Insert
-    void insertUser(User user); // Felhasználó hozzáadása
+    void insertUser(User user);
 
     @Update
-    void updateUser(User user); // Felhasználó frissítése
+    void updateUser(User user);
 
     @Query("SELECT * FROM user_table WHERE id = :userId LIMIT 1")
     LiveData<User> getUserById(String userId);
 
-    @Query("UPDATE user_table SET score = :score WHERE id = :userId")
-    void updateScore(String userId, int score);
+
 }
