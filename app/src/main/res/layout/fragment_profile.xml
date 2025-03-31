@@ -9,11 +9,33 @@
         android:id="@+id/userNameTextView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Név"
+        android:text="Felhasználónév:"
         android:textSize="18sp"
         android:layout_marginBottom="8dp"
         android:textStyle="bold" />
 
+    <EditText
+        android:id="@+id/userNameEditText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Felhasználónév"
+        android:textSize="18sp"
+        android:layout_marginBottom="8dp"
+        android:textStyle="bold" />
+    <Button
+        android:id="@+id/saveUserNameButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Felhasználónév mentése"
+        android:layout_marginBottom="16dp" />
+    <TextView
+        android:id="@+id/emailTextView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Email-cím:"
+        android:textSize="18sp"
+        android:layout_marginBottom="8dp"
+        android:textStyle="bold" />
     <TextView
         android:id="@+id/userEmailTextView"
         android:layout_width="match_parent"
@@ -26,9 +48,8 @@
         android:id="@+id/logoutButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Kijelentkezés"
         android:layout_marginTop="16dp"
         android:backgroundTint="@android:color/holo_red_dark"
-        />
+        android:text="Kijelentkezés" />
 
 </LinearLayout>
