@@ -74,7 +74,6 @@ public class LoginActivitytest {
             e.printStackTrace();
         }
 
-
         onView(withId(R.id.loginButton)).check(matches(isDisplayed()));
     }
 }
