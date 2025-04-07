@@ -46,7 +46,7 @@ public class LeaderboardViewModel extends ViewModel {
                 .get()
                 .addOnSuccessListener(queryDocumentSnapshots -> {
                     List<UserScore> scores = new ArrayList<>();
-                    int totalUsers = queryDocumentSnapshots.size(); // Összes várt elem
+                    int totalUsers = queryDocumentSnapshots.size();
 
                     for (QueryDocumentSnapshot doc : queryDocumentSnapshots) {
                         String userId = doc.getId();
@@ -59,19 +59,19 @@ public class LeaderboardViewModel extends ViewModel {
                                     String name = userDoc.exists() ? userDoc.getString("name") : "Névtelen";
                                     scores.add(new UserScore(userId, score, name));
 
-                                    // Csak akkor frissítsük a rangsort, ha minden adat megérkezett
+
                                     if (scores.size() == totalUsers) {
                                         scores.sort((a, b) -> Integer.compare(b.getScore(), a.getScore()));
-                                        leaderboardData.setValue(new ArrayList<>(scores)); // Másolatot küldünk
-                                        Log.d("Leaderboard", "Sorted scores: " + scores);
+                                        leaderboardData.setValue(new ArrayList<>(scores));
+                                        Log.d("Leaderboard", "Rendezett pontok: " + scores);
                                     }
                                 })
                                 .addOnFailureListener(e -> {
                                     scores.add(new UserScore(userId, score, "Hiba"));
                                     if (scores.size() == totalUsers) {
                                         scores.sort((a, b) -> Integer.compare(b.getScore(), a.getScore()));
-                                        leaderboardData.setValue(new ArrayList<>(scores)); // Másolatot küldünk
-                                        Log.d("Leaderboard", "Sorted scores with error: " + scores);
+                                        leaderboardData.setValue(new ArrayList<>(scores));
+                                        Log.d("Leaderboard", "Rendezett pontok hiba: " + scores);
                                     }
                                 });
                     }
