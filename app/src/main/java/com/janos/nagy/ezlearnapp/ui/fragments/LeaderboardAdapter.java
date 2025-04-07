@@ -38,10 +38,10 @@ public class LeaderboardAdapter extends RecyclerView.Adapter<LeaderboardAdapter.
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         UserScore userScore = userScores.get(position);
         holder.rankTextView.setText((position + 1) + ".");
-        holder.nameTextView.setText(userScore.getName()); // Display the name
+        holder.nameTextView.setText(userScore.getName());
         holder.scoreTextView.setText("Pontszám: " + userScore.getScore());
 
-        // Highlight the current user
+
         if (userScore.getUserId().equals(currentUserId)) {
             holder.itemView.setBackgroundColor(ContextCompat.getColor(context, R.color.teal_200));
         } else {
@@ -60,7 +60,7 @@ public class LeaderboardAdapter extends RecyclerView.Adapter<LeaderboardAdapter.
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             rankTextView = itemView.findViewById(R.id.rank_text_view);
-            nameTextView = itemView.findViewById(R.id.name_text_view); // New TextView for name
+            nameTextView = itemView.findViewById(R.id.name_text_view);
             scoreTextView = itemView.findViewById(R.id.score_text_view);
         }
     }

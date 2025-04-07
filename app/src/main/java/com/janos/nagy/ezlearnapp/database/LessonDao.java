@@ -20,7 +20,7 @@ public interface LessonDao {
     LiveData<List<Lesson>> getLessonsByUserId(String userId);
 
     @Delete
-    void deleteLesson(Lesson lesson);  // Törlés metódus hozzáadása
+    void deleteLesson(Lesson lesson);
 
     @Query("SELECT * FROM lessons WHERE id = :lessonId LIMIT 1")
     Lesson getLessonById(int lessonId);

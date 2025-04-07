@@ -32,8 +32,8 @@ public class UserRepository {
             firestore.collection("users")
                     .document(user.getId())
                     .set(user)
-                    .addOnSuccessListener(aVoid -> Log.d("UserRepository", "User saved to Firestore: " + user.getId()))
-                    .addOnFailureListener(e -> Log.e("UserRepository", "Error saving user to Firestore", e));
+                    .addOnSuccessListener(aVoid -> Log.d("UserRepository", "Felhasznalo elmentve a Firestoreba: " + user.getId()))
+                    .addOnFailureListener(e -> Log.e("UserRepository", "hiba a felhasznalo mentesekor a firestoreba", e));
         });
     }
 
@@ -44,8 +44,8 @@ public class UserRepository {
             firestore.collection("users")
                     .document(user.getId())
                     .set(user)
-                    .addOnSuccessListener(aVoid -> Log.d("UserRepository", "User updated in Firestore: " + user.getId()))
-                    .addOnFailureListener(e -> Log.e("UserRepository", "Error updating user in Firestore", e));
+                    .addOnSuccessListener(aVoid -> Log.d("UserRepository", "Felhasznalo frissitve a Firestoreba: " + user.getId()))
+                    .addOnFailureListener(e -> Log.e("UserRepository", "Felhasznalo frissitese a Firestoreba hibas", e));
         });
     }
 
@@ -60,11 +60,11 @@ public class UserRepository {
                         if (user != null) {
                             AppDatabase.databaseWriteExecutor.execute(() -> {
                                 userDao.insertUser(user);
-                                Log.d("UserRepository", "User synced from Firestore: " + userId);
+                                Log.d("UserRepository", "Felhasznalo szinkronizalva: " + userId);
                             });
                         }
                     }
                 })
-                .addOnFailureListener(e -> Log.e("UserRepository", "Error syncing user from Firestore", e));
+                .addOnFailureListener(e -> Log.e("UserRepository", "Hibas felhasznalo szinkronizacio a firestoreban", e));
     }
 }

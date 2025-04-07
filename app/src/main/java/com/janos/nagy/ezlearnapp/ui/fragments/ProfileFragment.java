@@ -42,12 +42,12 @@ public class ProfileFragment extends Fragment {
         logoutButton = view.findViewById(R.id.logoutButton);
 
 
-        // Get the current user
+
         FirebaseUser firebaseUser = mAuth.getCurrentUser();
         if (firebaseUser != null) {
             String userId = firebaseUser.getUid();
 
-            // Load existing user data
+
             firestore.collection("users")
                     .document(userId)
                     .get()
@@ -67,7 +67,7 @@ public class ProfileFragment extends Fragment {
             String email = firebaseUser.getEmail();
             userEmailTextView.setText(email != null && !email.isEmpty() ? email : "Nincs email");
 
-            // Save new username
+
             saveUserNameButton.setOnClickListener(v -> {
                 String newName = userNameEditText.getText().toString().trim();
                 if (!newName.isEmpty()) {
@@ -78,7 +78,7 @@ public class ProfileFragment extends Fragment {
                                 if (documentSnapshot.exists()) {
                                     Long lastChange = documentSnapshot.getLong("lastNameChangeTimestamp");
                                     long currentTime = System.currentTimeMillis();
-                                    long oneMonthInMillis = 30L * 24 * 60 * 60 * 1000; // Approx 30 days
+                                    long oneMonthInMillis = 30L * 24 * 60 * 60 * 1000;
 
                                     if (lastChange == null || (currentTime - lastChange >= oneMonthInMillis)) {
                                         User updatedUser = new User(userId, newName,currentTime);
@@ -102,7 +102,7 @@ public class ProfileFragment extends Fragment {
             saveUserNameButton.setEnabled(false);
         }
 
-        // Logout functionality
+
         logoutButton.setOnClickListener(v -> {
             mAuth.signOut();
             Intent intent = new Intent(getActivity(), LoginActivity.class);

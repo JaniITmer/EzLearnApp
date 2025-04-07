@@ -8,10 +8,10 @@ public class Task {
     @PrimaryKey(autoGenerate = true)
     private int id;
     private String title;
-    private long startTime; // Határidőként használjuk
+    private long startTime;
     private int pomodoroCount;
     private boolean completed;
-    private String userId; // Új mező a felhasználó azonosításához
+    private String userId;
 
 
     public Task(String title, long startTime, int pomodoroCount, boolean completed, String userId) {

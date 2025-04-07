@@ -55,7 +55,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
 
         holder.deleteButton.setOnClickListener(v -> {
             actionListener.onDeleteTask(task);
-            notifyItemRemoved(position); //
+            notifyItemRemoved(position);
         });
     }
 

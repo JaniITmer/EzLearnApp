@@ -29,7 +29,7 @@ import com.janos.nagy.ezlearnapp.repository.UserRepository;
 
 
 public class PomodoroFragment extends Fragment {
-    private StudyViewModel viewModel; // Class field
+    private StudyViewModel viewModel;
     private TextView timerText;
     private TextView scoreText;
     private Button startButton;
@@ -66,17 +66,17 @@ public class PomodoroFragment extends Fragment {
             StudyRepository repository = new StudyRepository(requireContext());
             String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
             StudyViewModelFactory factory = new StudyViewModelFactory(requireActivity().getApplication(), userId, repository);
-            viewModel = new ViewModelProvider(this, factory).get(StudyViewModel.class); // Assign to class field
+            viewModel = new ViewModelProvider(this, factory).get(StudyViewModel.class);
 
             viewModel.getRemainingTime().observe(getViewLifecycleOwner(), remainingTime -> {
                 if (remainingTime != null) {
                     int minutes = (int) (remainingTime / 60);
                     int seconds = (int) (remainingTime % 60);
                     timerText.setText(String.format("%02d:%02d", minutes, seconds));
-                    Log.d("PomodoroFragment", "Timer updated: " + remainingTime + " seconds");
+                    Log.d("PomodoroFragment", "Idozito frissitve: " + remainingTime + " masodperc");
                 } else {
                     timerText.setText("25:00");
-                    Log.d("PomodoroFragment", "Remaining time is null, resetting to default");
+                    Log.d("PomodoroFragment", "Hatralevo ido Null");
                 }
             });
 
@@ -108,10 +108,10 @@ public class PomodoroFragment extends Fragment {
             startButton.setOnClickListener(v -> {
                 if (viewModel.isPomodoroRunning().getValue()) {
                     viewModel.stopPomodoro();
-                    Log.d("PomodoroFragment", "Stopping Pomodoro session");
+                    Log.d("PomodoroFragment", "Pomodoro session leallitasa");
                 } else {
                     viewModel.startPomodoro();
-                    Log.d("PomodoroFragment", "Starting Pomodoro session");
+                    Log.d("PomodoroFragment", "Pomodoro session elkezdese");
                 }
             });
         } else {
@@ -137,7 +137,7 @@ public class PomodoroFragment extends Fragment {
                 try {
                     int minutes = Integer.parseInt(minutesStr);
                     if (minutes > 0) {
-                        viewModel.setPomodoroDuration(minutes); // Line 144 - viewModel is now properly initialized
+                        viewModel.setPomodoroDuration(minutes);
                         Toast.makeText(getContext(), "Időtartam beállítva: " + minutes + " perc", Toast.LENGTH_SHORT).show();
                     } else {
                         Toast.makeText(getContext(), "Az időtartam pozitív szám kell legyen!", Toast.LENGTH_SHORT).show();

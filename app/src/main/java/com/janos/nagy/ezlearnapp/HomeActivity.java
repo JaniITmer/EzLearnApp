@@ -27,18 +27,18 @@ public class HomeActivity extends AppCompatActivity {
 
         View navHostView = findViewById(R.id.nav_host_fragment);
         if (navHostView == null) {
-            Log.e(TAG, "FragmentContainerView not found with ID: " + R.id.nav_host_fragment);
+            Log.e(TAG, "FragmentContainerView nincs ilyen ID-vel: " + R.id.nav_host_fragment);
             return;
         } else {
-            Log.d(TAG, "FragmentContainerView found with ID: " + R.id.nav_host_fragment);
+            Log.d(TAG, "FragmentContainerView ilyen ID-vel: " + R.id.nav_host_fragment);
         }
 
         BottomNavigationView navView = findViewById(R.id.nav_view);
         if (navView == null) {
-            Log.e(TAG, "BottomNavigationView not found!");
+            Log.e(TAG, "BottomNavigationView nem található");
             return;
         } else {
-            Log.d(TAG, "BottomNavigationView found with ID: " + R.id.nav_view);
+            Log.d(TAG, "BottomNavigationView található ID-vel: " + R.id.nav_view);
         }
 
 
@@ -47,7 +47,7 @@ public class HomeActivity extends AppCompatActivity {
         NavController navController;
 
         if (navHostFragment == null) {
-            Log.d(TAG, "NavHostFragment not found, creating manually...");
+            Log.d(TAG, "NavHostFragment nem talalhato, keszites manualisan..");
             try {
                 navHostFragment = NavHostFragment.create(R.navigation.nav_graph);
                 fragmentManager.beginTransaction()
@@ -56,15 +56,15 @@ public class HomeActivity extends AppCompatActivity {
                         .commitNow();
                 navController = navHostFragment.getNavController();
             } catch (Exception e) {
-                Log.e(TAG, "Failed to create or attach NavHostFragment: " + e.getMessage(), e);
+                Log.e(TAG, "Hiba navHostFragment letrehozasakor " + e.getMessage(), e);
                 return;
             }
         } else {
-            Log.d(TAG, "NavHostFragment found with ID: " + R.id.nav_host_fragment);
+            Log.d(TAG, "NavHostFragment megtalalhato ID: " + R.id.nav_host_fragment);
             navController = navHostFragment.getNavController();
         }
 
         NavigationUI.setupWithNavController(navView, navController);
-        Log.d(TAG, "NavController successfully initialized with ID: " + R.id.nav_host_fragment);
+        Log.d(TAG, "NavController sikeresen beallitva ID: " + R.id.nav_host_fragment);
     }
 }

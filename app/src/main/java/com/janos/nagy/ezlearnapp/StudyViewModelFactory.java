@@ -25,6 +25,6 @@ public class StudyViewModelFactory implements ViewModelProvider.Factory {
         if (modelClass.isAssignableFrom(StudyViewModel.class)) {
             return (T) new StudyViewModel(application, userId, repository);
         }
-        throw new IllegalArgumentException("Unknown ViewModel class");
+        throw new IllegalArgumentException("Ismeretlen ViewModel class");
     }
 }

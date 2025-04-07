@@ -74,7 +74,7 @@ public class LessonViewModel extends AndroidViewModel {
             if (modelClass.isAssignableFrom(LessonViewModel.class)) {
                 return (T) new LessonViewModel(application, repository, firebaseAuth);
             }
-            throw new IllegalArgumentException("Unknown ViewModel class");
+            throw new IllegalArgumentException("Ismeretlen ViewModel class");
         }
     }
 }
