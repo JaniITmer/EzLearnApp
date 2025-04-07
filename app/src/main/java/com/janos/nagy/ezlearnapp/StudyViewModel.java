@@ -30,16 +30,16 @@ public class StudyViewModel extends ViewModel {
     private final String userId;
     private final MutableLiveData<Boolean> isPomodoroRunning = new MutableLiveData<>(false);
     private final Application application;
-    private final FirebaseFirestore firestore; // Added Firestore field
+    private final FirebaseFirestore firestore;
 
     public StudyViewModel(Application application, String userId, StudyRepository repository) {
         this.repository = repository;
         this.userId = userId;
         this.application = application;
-        this.firestore = FirebaseFirestore.getInstance(); // Initialize Firestore
+        this.firestore = FirebaseFirestore.getInstance();
         remainingTime.setValue(pomodoroDuration / 1000);
         userScore = repository.getScore(userId);
-        Log.d("StudyViewModel", "Constructor called for userId: " + userId);
+        Log.d("StudyViewModel", "Konstruktor meghívva az user-hez " + userId);
     }
 
     StudyRepository getRepository() {
@@ -67,7 +67,7 @@ public class StudyViewModel extends ViewModel {
         if (!isPomodoroRunning.getValue()) {
             remainingTime.setValue(pomodoroDuration / 1000);
         }
-        Log.d("StudyViewModel", "Pomodoro duration set to: " + minutes + " minutes");
+        Log.d("StudyViewModel", "Pomodoro ido beallitva: " + minutes + " perc");
     }
 
     public void startPomodoro() {
@@ -80,7 +80,7 @@ public class StudyViewModel extends ViewModel {
         currentSession.setValue(session);
         repository.insertSession(session);
         isPomodoroRunning.setValue(true);
-        Log.d("StudyViewModel", "startPomodoro called, new session created for userId: " + userId);
+        Log.d("StudyViewModel", "startPomodoro meghivasa:" + userId);
 
         pomodoroTimer = new CountDownTimer(pomodoroDuration, 1000) {
             @Override
@@ -88,7 +88,7 @@ public class StudyViewModel extends ViewModel {
                 remainingTime.setValue(millisUntilFinished / 1000);
                 if (millisUntilFinished % (60 * 1000) == 0) {
                     updateScore(1);
-                    Log.d("StudyViewModel", "Added 1 point during tick.");
+                    Log.d("StudyViewModel", "1 pont hozzaadva");
                 }
             }
 
@@ -102,7 +102,7 @@ public class StudyViewModel extends ViewModel {
                     repository.updateSession(completedSession);
                     int pointsToAdd = (int) (pomodoroDuration / (60 * 1000));
                     updateScore(pointsToAdd);
-                    Log.d("StudyViewModel", "Pomodoro finished. Added " + pointsToAdd + " points.");
+                    Log.d("StudyViewModel", "Pomodoro vege: " + pointsToAdd + " pont");
                 }
                 stopPomodoro(false);
                 sendPomodoroFinishedNotification();
@@ -129,7 +129,7 @@ public class StudyViewModel extends ViewModel {
                 long elapsedTime = session.getEndTime() - session.getStartTime();
                 long durationInMinutes = elapsedTime / (60 * 1000);
                 updateScore((int) durationInMinutes);
-                Log.d("StudyViewModel", "Pomodoro stopped. Added " + durationInMinutes + " points.");
+                Log.d("StudyViewModel", "Pomodoro leallitva: " + durationInMinutes + " pont.");
             }
         }
         isPomodoroRunning.setValue(false);
@@ -141,25 +141,25 @@ public class StudyViewModel extends ViewModel {
         String name = (currentScore != null && currentScore.getName() != null) ? currentScore.getName() : null;
 
         if (name == null && userId != null) {
-            // Fetch name from Firestore if not available
+
             firestore.collection("users").document(userId).get()
                     .addOnSuccessListener(documentSnapshot -> {
                         String fetchedName = documentSnapshot.exists() ? documentSnapshot.getString("name") : "Névtelen";
                         UserScore updatedScore = new UserScore(userId, newScore, fetchedName);
                         repository.updateScore(updatedScore);
-                        Log.d("StudyViewModel", "Score updated with fetched name. Points added: " + points + ", New total: " + newScore);
+                        Log.d("StudyViewModel", "Pontszam frissitve " + points + ", Uj pontszam " + newScore);
                     })
                     .addOnFailureListener(e -> {
-                        // Fallback to "Névtelen" if fetch fails
+
                         UserScore updatedScore = new UserScore(userId, newScore, "Névtelen");
                         repository.updateScore(updatedScore);
-                        Log.d("StudyViewModel", "Score updated with default name. Points added: " + points + ", New total: " + newScore);
+                        Log.d("StudyViewModel", "Fontszam frissitve " + points + ", ujj pontszam osszesen " + newScore);
                     });
         } else {
-            // Use existing name if available
+
             UserScore updatedScore = new UserScore(userId, newScore, name != null ? name : "Névtelen");
             repository.updateScore(updatedScore);
-            Log.d("StudyViewModel", "Score updated. Points added: " + points + ", New total: " + newScore);
+            Log.d("StudyViewModel", "Pontszam frissitve: " + points + ", Ujj pontszam osszesen: " + newScore);
         }
     }
 
@@ -191,6 +191,6 @@ public class StudyViewModel extends ViewModel {
                 .setAutoCancel(true);
 
         notificationManager.notify(1, builder.build());
-        Log.d("StudyViewModel", "Pomodoro finished notification sent.");
+        Log.d("StudyViewModel", "Pomodor vege,  ertesites megjelenitve.");
     }
 }
