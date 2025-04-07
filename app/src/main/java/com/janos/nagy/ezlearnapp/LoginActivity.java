@@ -59,7 +59,7 @@ public class LoginActivity extends AppCompatActivity {
                                     finish();
                                 }
                             } else {
-                                Toast.makeText(LoginActivity.this, "Authentication failed: " + task.getException().getMessage(), Toast.LENGTH_LONG).show();
+                                Toast.makeText(LoginActivity.this, "Hibás email vagy jelszó: " + task.getException().getMessage(), Toast.LENGTH_LONG).show();
                             }
                         });
             }
