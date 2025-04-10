@@ -13,21 +13,22 @@ public class MyNotificationService extends NotificationListenerService {
     @Override
     public void onNotificationPosted(StatusBarNotification sbn) {
         String packageName = sbn.getPackageName();
-
-        String myAppPackageName = "com.janos.nagy.ezlearnapp";
-
         List<String> allowedApps = Arrays.asList(
-                myAppPackageName,
-                "com.android.systemui",
-                "com.google.android.gm"
+                "com.janos.nagy.ezlearnapp"
+
         );
 
         if (!allowedApps.contains(packageName)) {
+            // Törlés az értesítési sávból
             cancelNotification(sbn.getKey());
-        }
 
-        Log.i("NotificationService", "Értesítés érkezett: " + packageName + " - " +
-                (allowedApps.contains(packageName) ? "Megengedett" : "Törölve"));
+            // Naplózás a részletekhez
+            Log.i(TAG, "Értesítés: " + packageName +
+                    ", Prioritás: " + sbn.getNotification().priority +
+                    ", Csatorna: " + sbn.getNotification().getChannelId());
+        } else {
+            Log.i(TAG, "Megengedett értesítés: " + packageName);
+        }
     }
 
     @Override

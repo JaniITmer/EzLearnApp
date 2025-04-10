@@ -9,9 +9,10 @@
 
 
     <TextView
-        android:gravity="center"
+        android:id="@+id/textView3"
         android:layout_width="365dp"
         android:layout_height="256dp"
+        android:gravity="center"
         android:text="Üdvözöllek! \nItt lehetőséged van regisztrálni vagy bejelentkezni."
         android:textSize="36sp"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -55,12 +56,13 @@
 
     <TextView
         android:id="@+id/textView2"
-        android:textSize="18sp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Ha új felhasználó vagy."
+        android:textSize="18sp"
         app:layout_constraintBottom_toTopOf="@+id/button"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView3" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
