@@ -45,6 +45,16 @@ public class PomodoroFragment extends Fragment {
             }
         });
     }
+    @Override
+    public void onPause() {
+        super.onPause();
+        Log.d("PomodoroFragment", "onPause – App háttérbe került");
+
+        if (viewModel != null && Boolean.TRUE.equals(viewModel.isPomodoroRunning().getValue())) {
+            viewModel.stopPomodoro(false);
+            Toast.makeText(getContext(), "Pomodoro megszakítva – háttérbe került a pomodoro menü", Toast.LENGTH_SHORT).show();
+        }
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {

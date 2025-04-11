@@ -86,10 +86,17 @@ public class StudyViewModel extends ViewModel {
             @Override
             public void onTick(long millisUntilFinished) {
                 remainingTime.setValue(millisUntilFinished / 1000);
+
                 if (millisUntilFinished % (60 * 1000) == 0) {
-                    updateScore(1);
-                    Log.d("StudyViewModel", "1 pont hozzaadva");
-                }
+                    if(EzLearnApplication.isAppInForeground()) {
+                        updateScore(1);
+                        Log.d("StudyViewModel", "1 pont hozzaadva");
+                    }
+                    else {
+                        Log.d("StudieViewModel","Háttérben nem jár pont");
+                    }
+                    }
+
             }
 
             @Override
@@ -114,7 +121,7 @@ public class StudyViewModel extends ViewModel {
         stopPomodoro(true);
     }
 
-    protected void stopPomodoro(boolean addPoints) {
+    public void stopPomodoro(boolean addPoints) {
         if (pomodoroTimer != null) {
             pomodoroTimer.cancel();
             pomodoroTimer = null;
