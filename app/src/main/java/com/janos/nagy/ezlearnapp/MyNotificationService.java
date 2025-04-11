@@ -18,16 +18,12 @@ public class MyNotificationService extends NotificationListenerService {
 
         );
 
-        if (!allowedApps.contains(packageName)) {
-            // Törlés az értesítési sávból
+        if (EzLearnApplication.isAppInForeground() && !allowedApps.contains(packageName)) {
             cancelNotification(sbn.getKey());
-
-            // Naplózás a részletekhez
-            Log.i(TAG, "Értesítés: " + packageName +
-                    ", Prioritás: " + sbn.getNotification().priority +
-                    ", Csatorna: " + sbn.getNotification().getChannelId());
+            Log.i(TAG, "Értesítés törölve (app előtérben): " + packageName);
         } else {
-            Log.i(TAG, "Megengedett értesítés: " + packageName);
+            Log.i(TAG, "Értesítés megengedve: " + packageName +
+                    (EzLearnApplication.isAppInForeground() ? " (app előtérben)" : " (app háttérben)"));
         }
     }
 
