@@ -27,13 +27,11 @@ public class OnboardingActivity extends AppCompatActivity {
         finishButton.setOnClickListener(new View.OnClickListener() {
             @Override
            public void onClick(View v) {
-                // az onboarding befejeződött
                 getSharedPreferences("AppPrefs", MODE_PRIVATE)
                         .edit()
                         .putBoolean("isFirstRun", false)
                         .apply();
 
-                // Indítsd el a főképernyőt
                 Intent intent = new Intent(OnboardingActivity.this, MainActivity.class);
                 startActivity(intent);
                 finish();

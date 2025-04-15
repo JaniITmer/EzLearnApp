@@ -11,6 +11,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.janos.nagy.ezlearnapp.repository.StudyRepository;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -18,50 +19,49 @@ public class LoginActivity extends AppCompatActivity {
     private Button loginButton;
 
     private FirebaseAuth mAuth;
+    private StudyViewModel studyViewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        // Firebase Auth initializálása
         mAuth = FirebaseAuth.getInstance();
 
-        // UI elemek inicializálása
         emailEditText = findViewById(R.id.emailEditText);
         passwordEditText = findViewById(R.id.passwordEditText);
         loginButton = findViewById(R.id.loginButton);
 
-        // Bejelentkezési gomb eseménykezelője
-        loginButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String email = emailEditText.getText().toString().trim();
-                String password = passwordEditText.getText().toString().trim();
+        loginButton.setOnClickListener(v -> {
+            String email = emailEditText.getText().toString().trim();
+            String password = passwordEditText.getText().toString().trim();
 
-                if (email.isEmpty() || password.isEmpty()) {
-                    Toast.makeText(LoginActivity.this, "Please fill in all fields", Toast.LENGTH_SHORT).show();
-                } else {
-                    // Bejelentkezés Firebase Authentication-nel
-                    mAuth.signInWithEmailAndPassword(email, password)
-                            .addOnCompleteListener(LoginActivity.this, task -> {
-                                if (task.isSuccessful()) {
-                                    // Sikeres bejelentkezés
-                                    FirebaseUser user = mAuth.getCurrentUser();
-                                    Toast.makeText(LoginActivity.this, "Login successful", Toast.LENGTH_SHORT).show();
+            if (email.isEmpty() || password.isEmpty()) {
+                Toast.makeText(LoginActivity.this, "Minden mezőt tölts ki!", Toast.LENGTH_SHORT).show();
+            } else {
+                mAuth.signInWithEmailAndPassword(email, password)
+                        .addOnCompleteListener(LoginActivity.this, task -> {
+                            if (task.isSuccessful()) {
+                                FirebaseUser user = mAuth.getCurrentUser();
+                                if (user != null) {
+                                    String userId = user.getUid();
 
-                                    // Ugrás a fő képernyőre (MainActivity)
+                                    Toast.makeText(LoginActivity.this, "Sikeres bejelentkezés", Toast.LENGTH_SHORT).show();
+
+
+                                    StudyRepository repository = new StudyRepository(getApplication());
+
+                                    studyViewModel = new StudyViewModel(getApplication(), userId, repository);
+                                    studyViewModel.syncScoresFromFirestore();
+
                                     Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
                                     startActivity(intent);
-
-                                    // A LoginActivity bezárása, hogy ne lehessen visszalépni
                                     finish();
-                                } else {
-                                    // Hiba kezelése
-                                    Toast.makeText(LoginActivity.this, "Authentication failed: " + task.getException().getMessage(), Toast.LENGTH_LONG).show();
                                 }
-                            });
-                }
+                            } else {
+                                Toast.makeText(LoginActivity.this, "Hibás email vagy jelszó: " + task.getException().getMessage(), Toast.LENGTH_LONG).show();
+                            }
+                        });
             }
         });
     }

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    app:startDestination="@id/navigation_pomodoro">
+
+    <fragment
+        android:id="@+id/navigation_pomodoro"
+        android:name="com.janos.nagy.ezlearnapp.ui.fragments.PomodoroFragment" />
+    <fragment
+        android:id="@+id/navigation_schedule"
+        android:name="com.janos.nagy.ezlearnapp.ui.fragments.ScheduleFragment" />
+    <fragment
+        android:id="@+id/navigation_leaderboard"
+        android:name="com.janos.nagy.ezlearnapp.ui.fragments.LeaderboardFragment" />
+    <fragment
+        android:id="@+id/navigation_lessons"
+        android:name="com.janos.nagy.ezlearnapp.ui.fragments.LessonsFragment" />
+    <fragment
+        android:id="@+id/navigation_profile"
+        android:name="com.janos.nagy.ezlearnapp.ui.fragments.ProfileFragment" />
+</navigation>

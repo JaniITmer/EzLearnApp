@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:id="@+id/navigation_pomodoro" android:icon="@drawable/alarm_clock_icon_2" android:title="Pomodoro"/>
+    <item android:id="@+id/navigation_schedule"  android:icon="@drawable/schedule_calendar_icon" android:title="Időbeosztás"/>
+    <item android:id="@+id/navigation_leaderboard" android:icon="@drawable/competition_icon" android:title="Rangsor"/>
+    <item android:id="@+id/navigation_lessons" android:icon="@drawable/writing_pad_line_icon" android:title="Leckék"/>
+    <item android:id="@+id/navigation_profile" android:icon="@drawable/avatar_icon" android:title="Profil"/>
+</menu>
