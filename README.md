@@ -53,5 +53,6 @@ Unit Tests: Used Mockito and Robolectric to test ViewModels (e.g., Pomodoro star
 UI Tests: Simulated user interactions with Espresso (e.g., login, Pomodoro start, leaderboard load).
 User Trials: Manual testing with three profiles (university student, high schooler, adult) to simulate real use.
 
+
 All tests passed with high code coverage.
 
