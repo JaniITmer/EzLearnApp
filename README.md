@@ -58,11 +58,10 @@ All tests passed with high code coverage.
 
 ## Screenshots
 
-| Addtask | Leaderboard | 
-|------|----------|
+| Addtask | Leaderboard |
+|---------|-------------|
 | ![Addtask](screenshots/addtask.png) | ![Leaderboard](screenshots/leaderboard.png) |
 
-| Pomodoro | Notification | 
-|---------|-------------|---------|
+| Pomodoro | Notification |
+|----------|--------------|
 | ![Pomodoro](screenshots/pomodoro.png) | ![Notification](screenshots/notification.png) |
-
